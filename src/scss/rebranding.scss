@@ -1,3 +1,122 @@
+// Definições de Cores Principais
 $primary: #e5293f;
+$secondary: #acbac2;
 
-@import "../../node_modules/bootstrap/scss/bootstrap";
+// Definição de Cores Customizadas (para serem adicionadas ao mapa do Bootstrap)
+$custom-colors: (
+  "tertiary": #7f919a
+);
+
+// Definições de Fontes
+@font-face {
+  font-family: 'Borna';
+  src: url('../fonts/borna-regular-webfont.woff2') format('woff2'),
+       url('../fonts/borna-regular-webfont.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Borna';
+  src: url('../fonts/borna-regularitalic-webfont.woff2') format('woff2'),
+       url('../fonts/borna-regularitalic-webfont.woff') format('woff');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Borna';
+  src: url('../fonts/borna-medium-webfont.woff2') format('woff2'),
+       url('../fonts/borna-medium-webfont.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Borna';
+  src: url('../fonts/borna-mediumitalic-webfont.woff2') format('woff2'),
+       url('../fonts/borna-mediumitalic-webfont.woff') format('woff');
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Borna';
+  src: url('../fonts/borna-semibold-webfont.woff2') format('woff2'),
+       url('../fonts/borna-semibold-webfont.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Borna';
+  src: url('../fonts/borna-semibolditalic-webfont.woff2') format('woff2'),
+       url('../fonts/borna-semibolditalic-webfont.woff') format('woff');
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Borna';
+  src: url('../fonts/borna-bold-webfont.woff2') format('woff2'),
+       url('../fonts/borna-bold-webfont.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Borna';
+  src: url('../fonts/borna-bolditalic-webfont.woff2') format('woff2'),
+       url('../fonts/borna-bolditalic-webfont.woff') format('woff');
+  font-weight: 700;
+  font-style: italic;
+}
+
+// Configuração de Tipografia do Bootstrap
+$font-family-sans-serif: "Borna", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+// Importar funções e variáveis do Bootstrap para poder sobrescrever/estender
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/variables-dark";
+
+// Merge de cores customizadas no mapa de temas
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+// Importar o restante do Bootstrap
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/utilities";
+@import "bootstrap/scss/root";
+@import "bootstrap/scss/reboot";
+@import "bootstrap/scss/type";
+@import "bootstrap/scss/images";
+@import "bootstrap/scss/containers";
+@import "bootstrap/scss/grid";
+@import "bootstrap/scss/tables";
+@import "bootstrap/scss/forms";
+@import "bootstrap/scss/buttons";
+@import "bootstrap/scss/transitions";
+@import "bootstrap/scss/dropdown";
+@import "bootstrap/scss/button-group";
+@import "bootstrap/scss/nav";
+@import "bootstrap/scss/navbar";
+@import "bootstrap/scss/card";
+@import "bootstrap/scss/accordion";
+@import "bootstrap/scss/breadcrumb";
+@import "bootstrap/scss/pagination";
+@import "bootstrap/scss/badge";
+@import "bootstrap/scss/alert";
+@import "bootstrap/scss/progress";
+@import "bootstrap/scss/list-group";
+@import "bootstrap/scss/close";
+@import "bootstrap/scss/toasts";
+@import "bootstrap/scss/modal";
+@import "bootstrap/scss/tooltip";
+@import "bootstrap/scss/popover";
+@import "bootstrap/scss/carousel";
+@import "bootstrap/scss/spinners";
+@import "bootstrap/scss/offcanvas";
+@import "bootstrap/scss/placeholders";
+@import "bootstrap/scss/helpers";
+@import "bootstrap/scss/utilities/api";

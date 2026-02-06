@@ -1,13 +1,15 @@
 {
   "name": "design-system",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "compile": "sass src/scss/rebranding.scss dist/css/bootstrap.min.css --style compressed && mkdir -p dist/js && cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js dist/js/"
+    "compile": "sass --load-path=node_modules --style compressed --source-map src/scss/rebranding.scss dist/css/bootstrap.min.css && mkdir -p dist/js dist/fonts && cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js dist/js/ && cp src/fonts/* dist/fonts/",
+    "compile:dev": "sass --load-path=node_modules src/scss/rebranding.scss dist/css/bootstrap.css && mkdir -p dist/js dist/fonts && cp node_modules/bootstrap/dist/js/bootstrap.bundle.min.js dist/js/ && cp src/fonts/* dist/fonts/",
+    "watch": "sass --load-path=node_modules --watch src/scss/rebranding.scss dist/css/bootstrap.css"
   },
   "devDependencies": {
     "sass": "^1.97.1",
