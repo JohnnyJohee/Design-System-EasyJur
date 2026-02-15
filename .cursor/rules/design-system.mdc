@@ -1,0 +1,67 @@
+---
+description: 
+alwaysApply: true
+---
+
+# Design System Evolution Guidelines
+
+Você é responsável por **desenvolver a solicitação no nosso Design System** (não apenas documentar). Trate isso como tarefa de engenharia: você vai **implementar**, **validar** e **documentar**.
+
+## Contexto Obrigatório
+
+- **Base**: O projeto é baseado em **Bootstrap**.
+- **Permissões**:
+  - Está **liberado** criar novas classes (utilitárias ou componentes) quando necessário.
+  - Está **liberado** atualizar/estender variáveis do Bootstrap quando a mudança for reaproveitável globalmente.
+- **Localização**: Toda customização **deve** ser feita em **Sass** dentro do arquivo `@src/scss/_base.scss`.
+- **Compilação**: O `_base.scss` é compilado junto com o Bootstrap. A compilação gera 3 arquivos: `design-system.css`, `saas.css`, `legal-ops.css`. Mudanças no `_base.scss` refletem globalmente em todos os bundles.
+- **Documentação**: Após implementar, você deve atualizar a documentação para deixar o resultado visível e utilizável.
+
+## Regras de Implementação
+
+1.  **Bootstrap-first**: Tente resolver via variáveis, tokens ou utilitários do Bootstrap antes de criar CSS "solto".
+2.  **Global vs Específico**:
+    - Se for regra global/reutilizável: prefira **variáveis** e padrões do Bootstrap (ex: `$primary`, `$font-family-sans-serif`).
+    - Se for algo específico: crie **classes novas** utilizando a metodologia de nomenclatura bem no final do `_base.scss`.
+3.  **Fonte da Verdade**: Não espalhe CSS. A fonte da verdade é o `@src/scss/_base.scss`.
+4.  **Consistência**:
+    - Use `rem` para tipografia e espaçamento.
+    - Mantenha nomes previsíveis.
+    - Evite `!important` a todo custo.
+5.  **Compatibilidade**: Não quebre estilos existentes sem plano de migração.
+
+## Fluxo de Trabalho
+
+### 1. Entenda a Solicitação
+- Qual é o objetivo visual/UX?
+- Critérios de aceite?
+
+### 2. Decida a Estratégia
+- Padrão global (variável) ou exceção (classe nova)?
+
+### 3. Implemente no Lugar Certo
+- Edite `@src/scss/_base.scss`.
+- Insira variáveis antes dos imports do Bootstrap (se for override de config).
+- Insira novas classes após os imports do Bootstrap.
+
+### 4. Valide
+- Garanta que o Sass compila sem erros.
+- Verifique visualmente os estados (default, hover, focus, disabled).
+
+### 5. Documente
+- Atualize a documentação do Design System com exemplos de uso (HTML).
+
+## Definição de Pronto (DoD)
+
+- [ ] Mudança implementada no `@src/scss/_base.scss`.
+- [ ] Novas classes/variáveis disponíveis após compilação.
+- [ ] Sem regressões visuais.
+- [ ] Documentação atualizada com exemplos.
+
+## Modelo de Commit/Entrega
+
+Ao finalizar uma tarefa de evolução do DS, forneça:
+- **Resumo**: O que mudou e por quê.
+- **Estratégia**: Variáveis ajustadas vs Classes criadas.
+- **Arquivos**: `@src/scss/_base.scss`.
+- **Exemplo de Uso**: Snippet HTML demonstrando a nova feature.
