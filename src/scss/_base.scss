@@ -5,7 +5,7 @@
 
 // Definições de Cores Principais
 $primary: #e5293f;
-$secondary: #278481;
+$secondary: #2784b1;
 
 // Definição de Cores Customizadas (para serem adicionadas ao mapa do Bootstrap)
 $custom-colors: (
@@ -13,9 +13,12 @@ $custom-colors: (
   "red-400": #F31D3F,
   "red-600": #C51935,
   "red-200": #F2949F,
-  "blue-500": #278481,
-  "blue-400": #3882F6,
+  "red-100": #FCD9DE,
+  "blue-500": #2784B1,
+  "blue-400": #3B82F6,
   "blue-600": #06B6D4,
+  "blue-200": #92CCE1,
+  "blue-100": #DAEAF2,
   "green-500": #047857,
   "green-400": #0CB56F,
   "green-200": #85DAB7,
@@ -31,13 +34,14 @@ $custom-colors: (
   "gray-900": #212529,
   "gray-800": #585B5E,
   "gray-700": #606469,
-  "gray-600": #485563,
+  "gray-600": #4B5563,
   "gray-500": #6B7280,
-  "gray-400": #909294,
+  "gray-400": #7A8188,
+  "gray-350": #909294,
   "gray-300": #7F919A,
   "gray-200": #9CA3AF,
-  "gray-100": #E7E8E9,
-  "gray-50": #F8F9FA,
+  "gray-150": #E7E8E9,
+  "gray-100": #F8F9FA,
   "white": #FFFFFF
 );
 
@@ -163,4 +167,16 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --#{$prefix}btn-hover-color: #fff;
   --#{$prefix}btn-active-color: #fff;
   --#{$prefix}btn-disabled-color: #fff;
+}
+
+// Remover o box-shadow vermelho ao focar ou passar o mouse no checkbox
+.form-check-input:focus {
+  border-color: #dee2e6; // Cor padrão da borda
+  outline: 0;
+  box-shadow: none;
+}
+
+.form-check-input:checked {
+  background-color: $primary;
+  border-color: $primary;
 }

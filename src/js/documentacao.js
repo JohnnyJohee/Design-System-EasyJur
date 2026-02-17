@@ -347,6 +347,79 @@ const CardProcesso = styled.div\`
 }
 
 function paginaCores() {
+  const secondaryColors = [
+    {
+      colors: [
+        { hex: "#E5293F", name: "Red 500" },
+        { hex: "#F31D3F", name: "Red 400" },
+        { hex: "#C51935", name: "Red 600" },
+        { hex: "#F2949F", name: "Red 200" },
+        { hex: "#FCD9DE", name: "Red 100" }
+      ]
+    },
+    {
+      colors: [
+        { hex: "#2784B1", name: "Blue 500" },
+        { hex: "#3B82F6", name: "Blue 400" },
+        { hex: "#06B6D4", name: "Blue 600" },
+        { hex: "#92CCE1", name: "Blue 200" },
+        { hex: "#DAEAF2", name: "Blue 100" }
+      ]
+    },
+    {
+      colors: [
+        { hex: "#047857", name: "Green 500" },
+        { hex: "#0CB56F", name: "Green 400" },
+        { hex: "#85DAB7", name: "Green 200" }
+      ]
+    },
+    {
+      colors: [
+        { hex: "#F97316", name: "Orange 500" },
+        { hex: "#FF8C00", name: "Orange 400" },
+        { hex: "#FBBF24", name: "Orange 200" }
+      ]
+    },
+    {
+      colors: [
+        { hex: "#8B5CF6", name: "Purple 500" },
+        { hex: "#A78BFA", name: "Purple 400" }
+      ]
+    },
+    {
+      colors: [
+        { hex: "#800000", name: "Dark Red 500" },
+        { hex: "#B91C1C", name: "Dark Red 400" }
+      ]
+    },
+    {
+      colors: [
+        { hex: "#FF385C", name: "Pink 500" },
+        { hex: "#FE5675", name: "Pink 400" }
+      ]
+    },
+    {
+      colors: [
+        { hex: "#212529", name: "Gray 900" },
+        { hex: "#585B5E", name: "Gray 800" },
+        { hex: "#606469", name: "Gray 700" },
+        { hex: "#4B5563", name: "Gray 600" },
+        { hex: "#6B7280", name: "Gray 500" },
+        { hex: "#7A8188", name: "Gray 400" }
+      ]
+    },
+    {
+      colors: [
+        { hex: "#909294", name: "Gray 350" },
+        { hex: "#7F919A", name: "Gray 300" },
+        { hex: "#9CA3AF", name: "Gray 200" },
+        { hex: "#E7E8E9", name: "Gray 150" },
+        { hex: "#F8F9FA", name: "Gray 100" },
+        { hex: "#FFFFFF", name: "White" }
+      ]
+    }
+  ];
+
   return `
     <section class="mb-5">
       <h2 class="display-6 fw-bold text-primary mb-3">Cores</h2>
@@ -387,6 +460,25 @@ function paginaCores() {
         </div>
       </div>
 
+      <h3 class="h6 text-uppercase text-muted fw-bold mb-4 ls-1">PALETA SECUNDÁRIA</h3>
+      <div class="row g-4 mb-5">
+        ${secondaryColors.map(group => `
+          <div class="col-6 col-md-4 col-lg-2 col-xl-1" style="min-width: 130px;">
+            <div class="d-flex flex-column gap-3">
+              ${group.colors.map(color => `
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <div class="rounded-1 shadow-sm" style="width: 40px; height: 40px; background-color: ${color.hex}; border: ${color.hex === '#FFFFFF' ? '1px solid #dee2e6' : 'none'}; flex-shrink: 0;"></div>
+                  <div style="line-height: 1.1">
+                    <div class="fw-bold font-monospace extra-small text-uppercase" style="font-size: 0.65rem;">${color.hex.replace('#', '')}</div>
+                    <div class="text-muted" style="font-size: 0.6rem;">${color.name}</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
       <h3 class="h6 text-uppercase text-muted fw-bold mb-3 ls-1">Cores semânticas</h3>
       <p class="small text-muted mb-3">Para feedback rápido: sucesso, erro, aviso e informação.</p>
       <div class="row g-4 mb-5">
@@ -423,47 +515,6 @@ function paginaCores() {
             <div class="card-body p-3">
               <div class="fw-bold small">Info</div>
               <div class="small font-monospace text-muted">#0DCAF0</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <h3 class="h6 text-uppercase text-muted fw-bold mb-3 ls-1">Neutros</h3>
-      <p class="small text-muted mb-3">Fundos e textos neutros para contraste e legibilidade.</p>
-      <div class="row g-4">
-        <div class="col-md-3 col-6">
-          <div class="card border h-100">
-            <div class="card-img-top border-bottom" style="height: 80px; background-color: #f8f9fa;"></div>
-            <div class="card-body p-3">
-              <div class="fw-bold small">Light</div>
-              <div class="small font-monospace text-muted">#F8F9FA</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 col-6">
-          <div class="card border h-100">
-            <div class="card-img-top" style="height: 80px; background-color: #212529;"></div>
-            <div class="card-body p-3">
-              <div class="fw-bold small">Dark</div>
-              <div class="small font-monospace text-muted">#212529</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 col-6">
-          <div class="card border h-100">
-            <div class="card-img-top border-bottom" style="height: 80px; background-color: #ffffff;"></div>
-            <div class="card-body p-3">
-              <div class="fw-bold small">White</div>
-              <div class="small font-monospace text-muted">#FFFFFF</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 col-6">
-          <div class="card border h-100">
-            <div class="card-img-top" style="height: 80px; background-color: #6c757d;"></div>
-            <div class="card-body p-3">
-              <div class="fw-bold small">Gray</div>
-              <div class="small font-monospace text-muted">#6C757D</div>
             </div>
           </div>
         </div>
@@ -1742,18 +1793,18 @@ function paginaSelects() {
 function paginaCheckboxes() {
   return `
     <section class="mb-5">
-      <h2 class="display-6 fw-bold text-primary mb-3">Checkboxes e Radios</h2>
-      <p class="lead text-muted mb-5">Seleção múltipla e única.</p>
+      <h2 class="display-6 fw-bold text-primary mb-3">Checkboxes</h2>
+      <p class="lead text-muted mb-5">O componente Checkbox é utilizado para permitir que o usuário selecione uma ou mais opções de uma lista, ou para alternar entre dois estados (ligado/desligado).</p>
 
-      ${componenteComCodigo('Checkbox',
+      ${componenteComCodigo('Estado Padrão',
         `<div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">Checkbox padrão</label>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+            <label class="form-check-label" for="checkDefault">Checkbox desmarcado</label>
           </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-            <label class="form-check-label" for="flexCheckChecked">Checkbox marcado</label>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="checkChecked" checked>
+            <label class="form-check-label" for="checkChecked">Checkbox marcado</label>
           </div>
         </div>`,
         `<div class="form-check">
@@ -1761,7 +1812,113 @@ function paginaCheckboxes() {
   <label class="form-check-label" for="c1">Label</label>
 </div>`,
         `<Checkbox label="Label" />`,
-        ''
+        'Use a classe .form-check para envolver o input e a label.'
+      )}
+
+      ${componenteComCodigo('Desabilitado',
+        `<div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="checkDisabled" disabled>
+            <label class="form-check-label" for="checkDisabled">Checkbox desabilitado</label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="checkCheckedDisabled" checked disabled>
+            <label class="form-check-label" for="checkCheckedDisabled">Checkbox marcado e desabilitado</label>
+          </div>
+        </div>`,
+        `<input class="form-check-input" type="checkbox" disabled>`,
+        `<Checkbox label="Label" disabled />`,
+        'Adicione o atributo disabled para desativar a interação.'
+      )}
+
+      ${componenteComCodigo('Indeterminado',
+        `<div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="checkIndeterminate">
+            <label class="form-check-label" for="checkIndeterminate">Checkbox indeterminado</label>
+          </div>
+          <script>
+            document.getElementById('checkIndeterminate').indeterminate = true;
+          </script>
+        </div>`,
+        `<input class="form-check-input" type="checkbox" id="ind1">
+<script>document.getElementById('ind1').indeterminate = true;</script>`,
+        `<Checkbox label="Label" indeterminate />`,
+        'O estado indeterminado deve ser definido via JavaScript.'
+      )}
+
+      ${componenteComCodigo('Alinhamento Horizontal (Inline)',
+        `<div class="d-flex gap-3">
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+            <label class="form-check-label" for="inlineCheckbox1">Opção 1</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+            <label class="form-check-label" for="inlineCheckbox2">Opção 2</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3" disabled>
+            <label class="form-check-label" for="inlineCheckbox3">Opção 3 (desabilitada)</label>
+          </div>
+        </div>`,
+        `<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" id="c1">
+  <label class="form-check-label">Opção</label>
+</div>`,
+        `<Checkbox label="Label" inline />`,
+        'Agrupe checkboxes na mesma linha usando .form-check-inline.'
+      )}
+
+      ${componenteComCodigo('Botões de Alternância (Toggle)',
+        `<div class="d-flex gap-2">
+          <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
+          <label class="btn btn-outline-primary" for="btncheck1">Checkbox 1</label>
+
+          <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off" checked>
+          <label class="btn btn-outline-primary" for="btncheck2">Checkbox 2 (Ativo)</label>
+
+          <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
+          <label class="btn btn-outline-secondary" for="btncheck3">Checkbox 3</label>
+        </div>`,
+        `<input type="checkbox" class="btn-check" id="btn1">
+<label class="btn btn-outline-primary" for="btn1">Botão</label>`,
+        `<Checkbox variant="button" label="Botão" />`,
+        'Use a classe .btn-check no input e as classes de botão (.btn .btn-*) na label.'
+      )}
+
+      ${componenteComCodigo('Lista de Seleção (Grouped)',
+        `<div class="list-group shadow-sm border-0">
+          <label class="list-group-item d-flex gap-3 align-items-center">
+            <input class="form-check-input flex-shrink-0" type="checkbox" value="" checked>
+            <span>
+              <strong>Primeiro item</strong>
+              <small class="d-block text-muted">Descrição curta do item selecionado.</small>
+            </span>
+          </label>
+          <label class="list-group-item d-flex gap-3 align-items-center">
+            <input class="form-check-input flex-shrink-0" type="checkbox" value="">
+            <span>
+              <strong>Segundo item</strong>
+              <small class="d-block text-muted">Este item ainda não foi marcado.</small>
+            </span>
+          </label>
+          <label class="list-group-item d-flex gap-3 align-items-center">
+            <input class="form-check-input flex-shrink-0" type="checkbox" value="">
+            <span>
+              <strong>Terceiro item</strong>
+              <small class="d-block text-muted">Exemplo de lista com checkbox lateral.</small>
+            </span>
+          </label>
+        </div>`,
+        `<div class="list-group">
+  <label class="list-group-item d-flex gap-2">
+    <input class="form-check-input" type="checkbox">
+    Texto
+  </label>
+</div>`,
+        `<CheckboxGroup items={...} />`,
+        'Combine list-group com checkboxes para seleções de lista mais ricas.'
       )}
     </section>
   `;
