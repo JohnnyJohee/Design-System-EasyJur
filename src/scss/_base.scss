@@ -5,7 +5,7 @@
 
 // Definições de Cores Principais
 $primary: #e5293f;
-$secondary: #2784b1;
+$secondary: #6B7280; // Alterado para cinza para manter apenas tons de vermelho, cinza e branco
 
 // Definição de Cores Customizadas (para serem adicionadas ao mapa do Bootstrap)
 $custom-colors: (
@@ -180,3 +180,14 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   background-color: $primary;
   border-color: $primary;
 }
+
+// Estilização específica da Sidebar (Documentação)
+.sidebar {
+  .nav-link {
+    font-size: 0.875rem; // Equivalente a 14px
+  }
+}
+
+// =============================================================================
+// Componente de Calendário (Range Picker)
+// =============================================================================

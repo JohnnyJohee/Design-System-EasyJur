@@ -20,6 +20,7 @@ const paginas = {
   spinners: paginaSpinners,
   toasts: paginaToasts,
   inputs: paginaInputs,
+  datas: paginaDatas,
   selects: paginaSelects,
   checkboxes: paginaCheckboxes,
   switches: paginaSwitches,
@@ -37,6 +38,19 @@ const paginas = {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
+  // Listener global para centralizar item ativo no dropdown ao abrir
+  document.addEventListener('shown.bs.dropdown', function(event) {
+    const dropdownMenu = event.target.nextElementSibling; // O menu é irmão do botão toggle
+    if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
+      const activeItem = dropdownMenu.querySelector('.dropdown-item.active');
+      // Verifica se o item existe e se está dentro do menu (para evitar erros)
+      if (activeItem) {
+        // Centraliza usando scrollTop para evitar scroll da página
+        dropdownMenu.scrollTop = activeItem.offsetTop - (dropdownMenu.clientHeight / 2) + (activeItem.clientHeight / 2);
+      }
+    }
+  });
+
   carregarPagina('introducao');
 
   const botoesNav = document.querySelectorAll('.nav-link[data-pagina]');
@@ -57,6 +71,21 @@ document.addEventListener('DOMContentLoaded', function() {
       carregarPagina(pagina);
     });
   });
+
+  // Fecha calendário flutuante quando o usuário clica fora dele ou dos campos de data
+  document.addEventListener('click', function(event) {
+    const cal = document.getElementById('demo-calendar');
+    if (!cal) return;
+    // só tenta fechar se estiver visível
+    if (!cal.classList.contains('d-none')) {
+      const target = event.target;
+      // não fecha se o clique estiver dentro do calendário,
+      // nos inputs correspondentes ou nos ícones que o abrem
+      if (!cal.contains(target) && !target.closest('#range-start-input, #range-end-input, .calendar-toggle')) {
+        cal.classList.add('d-none');
+      }
+    }
+  });
 });
 
 function carregarPagina(pagina) {
@@ -73,6 +102,24 @@ function inicializarComponentesBootstrap() {
 
   const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
   [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+
+  // Inicializar Flatpickr
+  if (window.flatpickr) {
+    window.flatpickr('.flatpickr-input', {
+      altInput: true,
+      altFormat: "d/m/Y",
+      dateFormat: "Y-m-d",
+      locale: "pt" // Você pode precisar importar o locale se desejar tradução
+    });
+
+    window.flatpickr('.flatpickr-range', {
+      mode: "range",
+      showMonths: 2,
+      altInput: true,
+      altFormat: "d/m/Y",
+      dateFormat: "Y-m-d"
+    });
+  }
 }
 
 function toggleCodigo(botao) {
@@ -148,43 +195,391 @@ function escapeHtml(text) {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+// Lógica para o seletor de data da documentação
+let startSelection = null;
+let endSelection = null;
+window.dsViewMonth = 1; // Fevereiro (0-indexed = 1)
+window.dsViewYear = 2026;
+
+const dsMonthsNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+window.dsBuildMonthHtml = function(month, year) {
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const prevMonthDays = new Date(year, month, 0).getDate();
+  
+  const today = new Date();
+  const isThisMonth = today.getMonth() === month && today.getFullYear() === year;
+  
+  let html = '';
+  
+  // Dias do mês anterior (cinza)
+  for (let i = firstDay - 1; i >= 0; i--) {
+    html += `<div class="text-muted calendar-day opacity-25" style="width: 14.28%">${prevMonthDays - i}</div>`;
+  }
+  
+  // Dias do mês atual
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
+    const isToday = isThisMonth && today.getDate() === d;
+    // Removida a classe calendar-day-today para evitar conflito de CSS com a seleção
+    const todayIndicator = isToday ? '<span class="position-absolute bg-danger rounded-circle" style="width: 5px; height: 5px; top: 4px; right: 4px;"></span>' : '';
+    
+    html += `<div class="text-dark cursor-pointer calendar-day" style="width: 14.28%" data-date="${dateStr}" onclick="window.dsSelectDate(this, ${d}, '${(month + 1).toString().padStart(2, '0')}', ${year})" onmouseover="window.dsHoverDate(this)" onmouseout="window.dsClearHover()">${d}${todayIndicator}</div>`;
+  }
+  
+  // Dias do próximo mês para fechar a grade (opcional, para manter alinhamento)
+  const totalCells = firstDay + daysInMonth;
+  const nextDays = (7 - (totalCells % 7)) % 7;
+  for (let i = 1; i <= nextDays; i++) {
+    html += `<div class="text-muted calendar-day opacity-25" style="width: 14.28%">${i}</div>`;
+  }
+  
+  return html;
+};
+
+window.dsUpdateCalendar = function() {
+  const container = document.getElementById('demo-calendar');
+  if (!container) return;
+
+  const m1 = window.dsViewMonth;
+  const y1 = window.dsViewYear;
+  const m2 = (m1 + 1) % 12;
+  const y2 = m1 === 11 ? y1 + 1 : y1;
+
+  // Atualiza nomes e grades
+  const grids = container.querySelectorAll('.calendar-grid');
+  const monthButtons = container.querySelectorAll('.dropdown-toggle'); // Simplificado, assume ordem
+  
+  // Mês 1
+  container.querySelector('#month-1-name').innerText = dsMonthsNames[m1];
+  container.querySelector('#year-1-name').innerText = y1;
+  grids[0].querySelector('.flex-wrap').innerHTML = window.dsBuildMonthHtml(m1, y1);
+  
+  // Mês 2
+  container.querySelector('#month-2-name').innerText = dsMonthsNames[m2];
+  container.querySelector('#year-2-name').innerText = y2;
+  grids[1].querySelector('.flex-wrap').innerHTML = window.dsBuildMonthHtml(m2, y2);
+
+  // Re-aplica seleções se existirem
+  const formatDate = (date) => {
+    const d = date.getDate().toString().padStart(2, '0');
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const y = date.getFullYear();
+    return `${y}-${m}-${d}`;
+  };
+
+  if (startSelection) {
+    const sStr = formatDate(startSelection.date);
+    document.querySelectorAll(`.calendar-day[data-date="${sStr}"]`).forEach(el => {
+      el.classList.add('bg-primary', 'text-white');
+      el.classList.remove('text-dark');
+      if (endSelection) el.classList.add('calendar-day-range-start');
+    });
+  }
+  if (endSelection) {
+    const eStr = formatDate(endSelection.date);
+    document.querySelectorAll(`.calendar-day[data-date="${eStr}"]`).forEach(el => {
+      el.classList.add('bg-primary', 'text-white');
+      el.classList.remove('text-dark');
+      el.classList.add('calendar-day-range-end');
+    });
+    
+    // Intervalo
+    document.querySelectorAll('.calendar-day').forEach(d => {
+      const dDateStr = d.getAttribute('data-date');
+      if (dDateStr) {
+        const dDate = new Date(dDateStr + 'T00:00:00');
+        if (dDate > startSelection.date && dDate < endSelection.date) {
+          d.classList.add('calendar-day-in-range');
+        }
+      }
+    });
+  }
+};
+
+window.dsSetMonth = function(m) {
+  window.dsViewMonth = m;
+  window.dsUpdateCalendar();
+};
+
+window.dsSetYear = function(y) {
+  window.dsViewYear = y;
+  window.dsUpdateCalendar();
+};
+
+window.dsEnableEdit = function(type, event) {
+  event.stopPropagation();
+  const input = document.getElementById(type === 'start' ? 'range-start-input' : 'range-end-input');
+  if (input) {
+    input.removeAttribute('readonly');
+    input.focus();
+  }
+};
+
+window.dsHandleInput = function(type, input) {
+  // 1. Limpa qualquer caractere não numérico para processar a lógica
+  let raw = input.value.replace(/\D/g, '');
+  if (raw.length > 8) raw = raw.slice(0, 8);
+
+  // 2. Aplica a máscara visualmente (dd/mm/yyyy)
+  let val = raw;
+  if (val.length >= 5) {
+    val = val.replace(/(\d{2})(\d{2})(\d{1,4})/, '$1/$2/$3');
+  } else if (val.length >= 3) {
+    val = val.replace(/(\d{2})(\d{1,2})/, '$1/$2');
+  }
+  input.value = val;
+
+  // 3. Validação em tempo real (apenas se tiver 8 números digitados)
+  if (raw.length === 8) {
+    const day = parseInt(raw.substring(0, 2), 10);
+    const month = parseInt(raw.substring(2, 4), 10);
+    const year = parseInt(raw.substring(4, 8), 10);
+
+    const date = new Date(year, month - 1, day);
+    // Verifica se a data é válida (ex: 31/02/2026 -> invalido)
+    const isValidDate = date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+
+    if (isValidDate) {
+        input.classList.remove('is-invalid'); // Remove erro visual se houver
+        
+        // Atualiza a seleção
+        const el = null;
+        if (type === 'start') {
+           startSelection = { date: date, str: val, el: el };
+           input.style.color = '#212529';
+        } else {
+           endSelection = { date: date, str: val, el: el };
+           input.style.color = '#212529';
+        }
+        
+        // Atualiza o calendário para focar na data digitada
+        window.dsSetMonth(month - 1);
+        window.dsSetYear(year);
+    } else {
+        // Data inválida (ex: dia 32, mês 13)
+        // Opcional: Adicionar classe de erro visual ou limpar seleção
+        // input.classList.add('is-invalid'); 
+        if (type === 'start') startSelection = null;
+        else endSelection = null;
+        window.dsUpdateCalendar();
+    }
+  } else {
+    // Se o usuário apagou ou ainda não terminou de digitar
+    if (raw.length === 0) {
+        if (type === 'start') {
+           startSelection = null;
+           input.style.color = '#5c6b7f';
+        } else {
+           endSelection = null;
+           input.style.color = '#5c6b7f';
+        }
+        window.dsUpdateCalendar();
+    }
+  }
+};
+
+window.dsFillCurrentDate = function(type) {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const day = today.getDate().toString().padStart(2, '0');
+  const month = (today.getMonth() + 1).toString().padStart(2, '0');
+  const year = today.getFullYear();
+  const dateStr = `${day}/${month}/${year}`;
+  const isoDate = `${year}-${month}-${day}`;
+  
+  // Tenta encontrar o elemento visual se estiver visível
+  const el = document.querySelector(`.calendar-day[data-date="${isoDate}"]`);
+  
+  if (type === 'start') {
+    startSelection = { date: today, str: dateStr, el: el };
+    
+    // Se existir data final e for anterior à inicial, limpa a final
+    if (endSelection && endSelection.date < today) {
+       endSelection = null;
+       const displayEnd = document.getElementById('range-end-input');
+       if (displayEnd) {
+          displayEnd.value = '';
+          displayEnd.style.color = '#5c6b7f';
+       }
+    }
+    
+    const displayStart = document.getElementById('range-start-input');
+    if (displayStart) {
+      displayStart.value = dateStr;
+      displayStart.style.color = '#212529';
+    }
+  } else if (type === 'end') {
+    // Se não tiver início ou início for maior que fim, ajusta o início para hoje também
+    if (!startSelection || startSelection.date > today) {
+       startSelection = { date: today, str: dateStr, el: el };
+       const displayStart = document.getElementById('range-start-input');
+       if (displayStart) {
+         displayStart.value = dateStr;
+         displayStart.style.color = '#212529';
+       }
+    }
+  
+    endSelection = { date: today, str: dateStr, el: el };
+    const displayEnd = document.getElementById('range-end-input');
+    if (displayEnd) {
+        displayEnd.value = dateStr;
+        displayEnd.style.color = '#212529';
+    }
+  }
+  
+  window.dsUpdateCalendar();
+};
+
+window.dsSelectDate = function(el, day, month, year) {
+  const displayStart = document.getElementById('range-start-input');
+  const displayEnd = document.getElementById('range-end-input');
+  const dateStr = `${day.toString().padStart(2, '0')}/${month}/${year}`;
+  const dateObj = new Date(year, parseInt(month) - 1, day);
+
+  if (!startSelection || (startSelection && endSelection)) {
+    // Reset e define início
+    startSelection = { el, date: dateObj, str: dateStr };
+    endSelection = null;
+    
+    // Limpa classes de todos os dias
+    document.querySelectorAll('.calendar-day').forEach(d => {
+      d.classList.remove('bg-primary', 'text-white', 'calendar-day-in-range', 'calendar-day-range-start', 'calendar-day-range-end');
+      d.classList.add('text-dark');
+    });
+
+    // Marca o início
+    if (el) {
+      el.classList.add('bg-primary', 'text-white');
+      el.classList.remove('text-dark');
+    }
+    
+    if (displayStart) {
+      displayStart.value = dateStr;
+      displayStart.style.color = '#212529';
+    }
+    if (displayEnd) {
+      displayEnd.value = '';
+      displayEnd.style.color = '#5c6b7f';
+    }
+  } else {
+    // Se clicar em data anterior à de início, vira o novo início
+    if (dateObj < startSelection.date) {
+        if (startSelection.el) {
+          startSelection.el.classList.remove('bg-primary', 'text-white');
+          startSelection.el.classList.add('text-dark');
+        }
+        
+        startSelection = { el, date: dateObj, str: dateStr };
+        if (el) {
+          el.classList.add('bg-primary', 'text-white');
+          el.classList.remove('text-dark');
+        }
+        
+        if (displayStart) {
+          displayStart.value = dateStr;
+          displayStart.style.color = '#212529';
+        }
+        return;
+    }
+
+    endSelection = { el, date: dateObj, str: dateStr };
+
+    // Marca o fim
+    if (el) {
+      el.classList.add('bg-primary', 'text-white');
+      el.classList.remove('text-dark');
+    }
+
+    if (displayEnd) {
+      displayEnd.value = endSelection.str;
+      displayEnd.style.color = '#212529';
+    }
+
+    // Aplica finalização do período (gradiente para conectar o círculo ao range)
+    if (startSelection.el && startSelection.date.getTime() !== endSelection.date.getTime()) {
+      startSelection.el.classList.add('calendar-day-range-start');
+    }
+    if (el && startSelection.date.getTime() !== endSelection.date.getTime()) {
+      el.classList.add('calendar-day-range-end');
+    }
+
+    // Pintar o intervalo
+    document.querySelectorAll('.calendar-day').forEach(d => {
+      const dDateStr = d.getAttribute('data-date');
+      if (dDateStr) {
+        const dDate = new Date(dDateStr + 'T00:00:00');
+        if (dDate > startSelection.date && dDate < endSelection.date) {
+          d.classList.add('calendar-day-in-range');
+        }
+      }
+    });
+  }
+};
+
+window.dsPrevMonth = function() {
+  window.dsViewMonth--;
+  if (window.dsViewMonth < 0) {
+    window.dsViewMonth = 11;
+    window.dsViewYear--;
+  }
+  window.dsUpdateCalendar();
+};
+
+window.dsNextMonth = function() {
+  window.dsViewMonth++;
+  if (window.dsViewMonth > 11) {
+    window.dsViewMonth = 0;
+    window.dsViewYear++;
+  }
+  window.dsUpdateCalendar();
+};
+
+window.dsFormatDate = function(date) {
+  const d = date.getDate();
+  const m = date.getMonth() + 1;
+  const y = date.getFullYear();
+  return (d < 10 ? '0' + d : d) + '-' + (m < 10 ? '0' + m : m) + '-' + y;
+};
+
 // ===================== PÁGINAS =====================
 
 function paginaIntroducao() {
   return `
     <section class="mb-5">
-      <div class="p-5 mb-4 bg-light rounded-3 border">
+      <div class="p-5 mb-4 rounded-3 border" style="background-color: rgba(var(--bs-primary-rgb), 0.05);">
         <div class="container-fluid py-5">
           <h1 class="display-5 fw-bold text-primary">EasyJur Design System</h1>
-          <p class="col-md-8 fs-4">Documentação oficial dos padrões de interface, componentes e diretrizes visuais para os produtos EasyJur.</p>
-          <hr class="my-4">
-          <p>Este sistema é a fonte única da verdade para o desenvolvimento frontend na EasyJur, garantindo consistência, acessibilidade e eficiência entre as equipes de SaaS e Legal Ops.</p>
-          <button class="btn btn-primary btn-lg" onclick="document.querySelector('[data-pagina=\\'rebranding\\']').click()">Começar pelo Rebranding</button>
+          <p class="col-md-8 fs-4 text-dark">Documentação oficial dos padrões de interface, componentes e diretrizes visuais para os produtos EasyJur.</p>
+          <hr class="my-4 opacity-25">
+          <p class="text-dark">Este sistema é a fonte única da verdade para o desenvolvimento frontend na EasyJur, garantindo consistência, acessibilidade e eficiência entre as equipes de SaaS e Legal Ops.</p>
+          <button class="btn btn-primary btn-lg px-4 fw-bold" onclick="document.querySelector('[data-pagina=\\'rebranding\\']').click()">Começar pelo Rebranding</button>
         </div>
       </div>
 
       <div class="row g-4 mb-5">
         <div class="col-md-4">
           <div class="card h-100 shadow-sm border-0 bg-primary text-white">
-            <div class="card-body">
+            <div class="card-body p-4">
               <h3 class="h5 fw-bold mb-3"><i class="bi bi-bootstrap me-2"></i> Baseado em Bootstrap 5</h3>
-              <p class="mb-0">Aproveitamos a robustez e a documentação do framework mais popular do mundo, estendendo-o com a identidade visual da EasyJur.</p>
+              <p class="mb-0 opacity-75">Aproveitamos a robustez e a documentação do framework mais popular do mundo, estendendo-o com a identidade visual da EasyJur.</p>
             </div>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card h-100 shadow-sm border-0 bg-secondary text-white">
-            <div class="card-body">
+          <div class="card h-100 shadow-sm border-0 text-white" style="background-color: #6B7280;">
+            <div class="card-body p-4">
               <h3 class="h5 fw-bold mb-3"><i class="bi bi-arrow-repeat me-2"></i> Estratégia de Rebranding</h3>
-              <p class="mb-0">Ferramentas exclusivas para permitir a convivência harmoniosa entre o novo design e as interfaces legadas do sistema.</p>
+              <p class="mb-0 opacity-75">Ferramentas exclusivas para permitir a convivência harmoniosa entre o novo design e as interfaces legadas do sistema.</p>
             </div>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card h-100 shadow-sm border-0 bg-dark text-white">
-            <div class="card-body">
+          <div class="card h-100 shadow-sm border-0 text-white" style="background-color: #374151;">
+            <div class="card-body p-4">
               <h3 class="h5 fw-bold mb-3"><i class="bi bi-code-square me-2"></i> Flexibilidade Técnica</h3>
-              <p class="mb-0">Suporte nativo para HTML/Sass no produto SaaS e integração com Styled Components para o ecossistema React do Legal Ops.</p>
+              <p class="mb-0 opacity-75">Suporte nativo para HTML/Sass no produto SaaS e integração com Styled Components para o ecossistema React do Legal Ops.</p>
             </div>
           </div>
         </div>
@@ -199,16 +594,16 @@ function paginaIntroducao() {
             <div class="card-body">
               <h4 class="h5 fw-bold text-primary">Identidade Visual</h4>
               <p class="text-muted">Tipografia <strong>Borna</strong>, paleta de cores institucional e espaçamentos refinados para transmitir a seriedade e modernidade da marca EasyJur.</p>
-              <a href="#" onclick="document.querySelector('[data-pagina=\\'cores\\']').click()" class="icon-link">Ver cores <i class="bi bi-arrow-right"></i></a>
+              <a href="#" onclick="document.querySelector('[data-pagina=\\'cores\\']').click()" class="icon-link text-primary">Ver cores <i class="bi bi-arrow-right"></i></a>
             </div>
           </div>
         </div>
         <div class="col-md-6">
-          <div class="card h-100 border-start border-4 border-secondary shadow-sm">
+          <div class="card h-100 border-start border-4 border-dark shadow-sm">
             <div class="card-body">
-              <h4 class="h5 fw-bold text-secondary">Componentes Ricos</h4>
+              <h4 class="h5 fw-bold text-dark">Componentes Ricos</h4>
               <p class="text-muted">De botões simples a modais complexos e data-tables. Todos os componentes foram auditados e estilizados para cobrir os casos de uso dos produtos.</p>
-              <a href="#" onclick="document.querySelector('[data-pagina=\\'botoes\\']').click()" class="icon-link">Explorar componentes <i class="bi bi-arrow-right"></i></a>
+              <a href="#" onclick="document.querySelector('[data-pagina=\\'botoes\\']').click()" class="icon-link text-dark">Explorar componentes <i class="bi bi-arrow-right"></i></a>
             </div>
           </div>
         </div>
@@ -1211,15 +1606,7 @@ function paginaContainers() {
             <table class="table table-bordered mb-0">
               <thead><tr><th>Classe</th><th>xs &lt;576px</th><th>sm ≥576px</th><th>md ≥768px</th><th>lg ≥992px</th><th>xl ≥1200px</th><th>xxl ≥1400px</th></tr></thead>
               <tbody>
-                <tr><td><code>.container</code></td><td>100%</td><td>540px</td><td>720px</td><td>960px</td><td>1140px</td><td>1320px</td></tr>
-                <tr><td><code>.container-sm</code></td><td>100%</td><td>540px</td><td>720px</td><td>960px</td><td>1140px</td><td>1320px</td></tr>
-                <tr><td><code>.container-md</code></td><td>100%</td><td>100%</td><td>720px</td><td>960px</td><td>1140px</td><td>1320px</td></tr>
-                <tr><td><code>.container-lg</code></td><td>100%</td><td>100%</td><td>100%</td><td>960px</td><td>1140px</td><td>1320px</td></tr>
-                <tr><td><code>.container-xl</code></td><td>100%</td><td>100%</td><td>100%</td><td>100%</td><td>1140px</td><td>1320px</td></tr>
-                <tr><td><code>.container-xxl</code></td><td>100%</td><td>100%</td><td>100%</td><td>100%</td><td>100%</td><td>1320px</td></tr>
-                <tr><td><code>.container-fluid</code></td><td colspan="6">100% em todos</td></tr>
-              </tbody>
-            </table>
+                <tr><td><code>.container</code></td><td>100%</td><td>540px</td><td>720px</td><td>960px</td><td>1140px</td><td>13
           </div>
         </div>
       </div>
@@ -1762,6 +2149,186 @@ function paginaInputs() {
 <input type="email" class="form-control" placeholder="name@example.com">`,
         `<Input label="Email" placeholder="..." />`,
         ''
+      )}
+    </section>
+  `;
+}
+
+function paginaDatas() {
+  const years = Array.from({length: 21}, (_, i) => 2016 + i);
+  const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+  return `
+    <section class="mb-5">
+      <h2 class="display-6 fw-bold text-primary mb-3">Datas</h2>
+      <p class="lead text-muted mb-4">Modelos de campos de data: input nativo, com ícone, intervalo e restrições.</p>
+
+      ${componenteComCodigo('Input Date — Nativo',
+        `<div>
+          <label class="form-label">Data</label>
+          <input type="date" class="form-control" id="date1">
+        </div>`,
+        `<label class="form-label">Data</label>
+<input type="date" class="form-control">`,
+        `<InputDate label="Data" />`,
+        ''
+      )}
+
+      ${componenteComCodigo('Input Date com ícone',
+        `<div class="input-group">
+          <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+          <input type="date" class="form-control" id="date2">
+        </div>`,
+        `<div class="input-group">
+  <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+  <input type="date" class="form-control">
+</div>`,
+        `<InputDate icon="calendar" />`,
+        'Use .input-group para adicionar ícones ou botões ao campo.'
+      )}
+
+      ${componenteComCodigo('Intervalo de datas',
+        `<div class="row g-3 align-items-end">
+          <div class="col-md-6">
+            <label class="form-label">De</label>
+            <input type="date" class="form-control" id="dateFrom">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Até</label>
+            <input type="date" class="form-control" id="dateTo">
+          </div>
+        </div>`,
+        `<div class="d-flex gap-2">
+  <input type="date" class="form-control">
+  <input type="date" class="form-control">
+</div>`,
+        `<DateRange />`,
+        'Para validação mais avançada, ligue o componente ao datepicker do seu framework.'
+      )}
+
+      ${componenteComCodigo('Restrições e desabilitado',
+        `<div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Data mínima / máxima</label>
+            <input type="date" class="form-control" min="2020-01-01" max="2030-12-31" id="dateMinMax">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Desabilitado</label>
+            <input type="date" class="form-control" disabled id="dateDisabled">
+          </div>
+        </div>`,
+        `<input type="date" min="2020-01-01" max="2030-12-31">`,
+        `<InputDate min="2020-01-01" max="2030-12-31" />`,
+        ''
+      )}
+
+      <h3 class="h4 fw-bold mt-5 mb-3">Modelos Avançados</h3>
+      <p class="text-muted">Componentes compostos para fluxos de reserva e seleção de intervalos complexos.</p>
+
+      ${componenteComCodigo('Range Picker — Calendário Duplo',
+        `<div class="rebranding">
+          <div class="row g-3 mb-3" style="max-width: 600px;">
+            <div class="col-md-6">
+              <div class="py-2 px-3 border rounded bg-white h-100 d-flex align-items-center">
+                <i class="bi bi-calendar3 me-2 cursor-pointer calendar-toggle" style="color: #5c6b7f;" onclick="document.getElementById('demo-calendar').classList.toggle('d-none')"></i>
+                <input type="text" id="range-start-input" class="form-control border-0 p-0 shadow-none" style="color: #5c6b7f;" placeholder="Data Início"
+                       onclick="document.getElementById('demo-calendar').classList.remove('d-none')"
+                       ondblclick="window.dsFillCurrentDate('start')"
+                       oninput="window.dsHandleInput('start', this)">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="py-2 px-3 border rounded bg-white h-100 d-flex align-items-center">
+                <i class="bi bi-calendar3 me-2 cursor-pointer calendar-toggle" style="color: #5c6b7f;" onclick="document.getElementById('demo-calendar').classList.toggle('d-none')"></i>
+                <input type="text" id="range-end-input" class="form-control border-0 p-0 shadow-none" style="color: #5c6b7f;" placeholder="Data Final"
+                       onclick="document.getElementById('demo-calendar').classList.remove('d-none')"
+                       ondblclick="window.dsFillCurrentDate('end')"
+                       oninput="window.dsHandleInput('end', this)">
+              </div>
+            </div>
+          </div>
+
+          <div id="demo-calendar" class="p-4 bg-white border rounded shadow-lg position-relative d-none calendar-compact" style="width: 650px; z-index: 10; font-size: 0.85rem;">
+            <div class="row">
+              <div class="col-6">
+                <div class="d-flex align-items-center mb-4 px-2">
+                  <button class="btn btn-calendar-nav me-auto" onclick="window.dsPrevMonth()">&lt;</button>
+                  <div class="d-flex gap-1 align-items-center mx-auto">
+                    <div class="dropdown">
+                      <button id="month-1-name" class="btn btn-sm btn-link text-dark fw-bold dropdown-toggle text-decoration-none border-0 p-0" type="button" data-bs-toggle="dropdown">Fevereiro</button>
+                      <ul class="dropdown-menu shadow" style="font-size: 0.8rem;">
+                        ${months.map((m, i) => `<li><a class="dropdown-item ${i === 1 ? 'active' : ''}" href="#" onclick="window.dsSetMonth(${i}); return false">${m}</a></li>`).join('')}
+                      </ul>
+                    </div>
+                    <div class="dropdown">
+                      <button id="year-1-name" class="btn btn-sm btn-link text-dark fw-bold dropdown-toggle text-decoration-none border-0 p-0" type="button" data-bs-toggle="dropdown">2026</button>
+                      <ul class="dropdown-menu shadow overflow-auto" style="font-size: 0.8rem; max-height: 200px;">
+                        ${years.map(y => `<li><a class="dropdown-item ${y === 2026 ? 'active' : ''}" href="#" onclick="window.dsSetYear(${y}); return false">${y}</a></li>`).join('')}
+                      </ul>
+                    </div>
+                  </div>
+                  <div style="width: 32px"></div>
+                </div>
+                <div class="calendar-grid">
+                  <div class="d-flex text-center text-primary fw-bold mb-2" style="font-size: 0.8rem;">
+                    <div style="width: 14.28%">D</div><div style="width: 14.28%">S</div><div style="width: 14.28%">T</div><div style="width: 14.28%">Q</div><div style="width: 14.28%">Q</div><div style="width: 14.28%">S</div><div style="width: 14.28%">S</div>
+                  </div>
+                  <div class="d-flex flex-wrap text-center" style="font-size: 0.9rem;">
+                    ${window.dsBuildMonthHtml(1, 2026)}
+                  </div>
+                </div>
+              </div>
+              <div class="col-6 border-start">
+                <div class="d-flex align-items-center mb-4 px-2">
+                  <div style="width: 32px"></div>
+                  <div class="d-flex gap-1 align-items-center mx-auto">
+                    <div class="dropdown">
+                      <button id="month-2-name" class="btn btn-sm btn-link text-dark fw-bold dropdown-toggle text-decoration-none border-0 p-0" type="button" data-bs-toggle="dropdown">Março</button>
+                      <ul class="dropdown-menu shadow" style="font-size: 0.8rem;">
+                        ${months.map((m, i) => `<li><a class="dropdown-item ${i === 2 ? 'active' : ''}" href="#" onclick="window.dsSetMonth(${(i-1+12)%12}); return false">${m}</a></li>`).join('')}
+                      </ul>
+                    </div>
+                    <div class="dropdown">
+                      <button id="year-2-name" class="btn btn-sm btn-link text-dark fw-bold dropdown-toggle text-decoration-none border-0 p-0" type="button" data-bs-toggle="dropdown">2026</button>
+                      <ul class="dropdown-menu shadow overflow-auto" style="font-size: 0.8rem; max-height: 200px;">
+                        ${years.map(y => `<li><a class="dropdown-item ${y === 2026 ? 'active' : ''}" href="#" onclick="window.dsSetYear(${y}); return false">${y}</a></li>`).join('')}
+                      </ul>
+                    </div>
+                  </div>
+                  <button class="btn btn-calendar-nav ms-auto" onclick="window.dsNextMonth()">&gt;</button>
+                </div>
+                <div class="calendar-grid">
+                  <div class="d-flex text-center text-primary fw-bold mb-2" style="font-size: 0.8rem;">
+                    <div style="width: 14.28%">D</div><div style="width: 14.28%">S</div><div style="width: 14.28%">T</div><div style="width: 14.28%">Q</div><div style="width: 14.28%">Q</div><div style="width: 14.28%">S</div><div style="width: 14.28%">S</div>
+                  </div>
+                  <div class="d-flex flex-wrap text-center" style="font-size: 0.9rem;">
+                    ${window.dsBuildMonthHtml(2, 2026)}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end align-items-center mt-4 pt-3 border-top">
+              <button class="btn btn-link text-primary text-decoration-none me-3" onclick="document.getElementById('demo-calendar').classList.add('d-none')">Fechar</button>
+              <button class="btn btn-primary px-4 fw-bold" onclick="document.getElementById('demo-calendar').classList.add('d-none')">Selecionar data</button>
+            </div>
+          </div>
+        </div>`,
+        `<div class="row g-3">
+  <div class="col-md-6">
+    <div class="py-2 px-3 border rounded bg-white d-flex align-items-center">
+      <i class="bi bi-calendar3 me-2" style="color: #5c6b7f;"></i>
+      <div style="color: #5c6b7f;">Data Início</div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="py-2 px-3 border rounded bg-white d-flex align-items-center">
+      <i class="bi bi-calendar3 me-2" style="color: #5c6b7f;"></i>
+      <div style="color: #5c6b7f;">Data Final</div>
+    </div>
+  </div>
+</div>`,
+        `<DateRangePicker separated doubleCalendar />`,
+        'Este modelo simula um seletor de passagens ou reservas com calendário duplo flutuante.'
       )}
     </section>
   `;
