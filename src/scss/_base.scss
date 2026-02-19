@@ -49,7 +49,7 @@ $custom-colors: (
 @font-face {
   font-family: 'Borna';
   src: url('../fonts/borna-regular-webfont.woff2') format('woff2'),
-       url('../fonts/borna-regular-webfont.woff') format('woff');
+    url('../fonts/borna-regular-webfont.woff') format('woff');
   font-weight: 400;
   font-style: normal;
 }
@@ -57,7 +57,7 @@ $custom-colors: (
 @font-face {
   font-family: 'Borna';
   src: url('../fonts/borna-regularitalic-webfont.woff2') format('woff2'),
-       url('../fonts/borna-regularitalic-webfont.woff') format('woff');
+    url('../fonts/borna-regularitalic-webfont.woff') format('woff');
   font-weight: 400;
   font-style: italic;
 }
@@ -65,7 +65,7 @@ $custom-colors: (
 @font-face {
   font-family: 'Borna';
   src: url('../fonts/borna-medium-webfont.woff2') format('woff2'),
-       url('../fonts/borna-medium-webfont.woff') format('woff');
+    url('../fonts/borna-medium-webfont.woff') format('woff');
   font-weight: 500;
   font-style: normal;
 }
@@ -73,7 +73,7 @@ $custom-colors: (
 @font-face {
   font-family: 'Borna';
   src: url('../fonts/borna-mediumitalic-webfont.woff2') format('woff2'),
-       url('../fonts/borna-mediumitalic-webfont.woff') format('woff');
+    url('../fonts/borna-mediumitalic-webfont.woff') format('woff');
   font-weight: 500;
   font-style: italic;
 }
@@ -81,7 +81,7 @@ $custom-colors: (
 @font-face {
   font-family: 'Borna';
   src: url('../fonts/borna-semibold-webfont.woff2') format('woff2'),
-       url('../fonts/borna-semibold-webfont.woff') format('woff');
+    url('../fonts/borna-semibold-webfont.woff') format('woff');
   font-weight: 600;
   font-style: normal;
 }
@@ -89,7 +89,7 @@ $custom-colors: (
 @font-face {
   font-family: 'Borna';
   src: url('../fonts/borna-semibolditalic-webfont.woff2') format('woff2'),
-       url('../fonts/borna-semibolditalic-webfont.woff') format('woff');
+    url('../fonts/borna-semibolditalic-webfont.woff') format('woff');
   font-weight: 600;
   font-style: italic;
 }
@@ -97,7 +97,7 @@ $custom-colors: (
 @font-face {
   font-family: 'Borna';
   src: url('../fonts/borna-bold-webfont.woff2') format('woff2'),
-       url('../fonts/borna-bold-webfont.woff') format('woff');
+    url('../fonts/borna-bold-webfont.woff') format('woff');
   font-weight: 700;
   font-style: normal;
 }
@@ -105,7 +105,7 @@ $custom-colors: (
 @font-face {
   font-family: 'Borna';
   src: url('../fonts/borna-bolditalic-webfont.woff2') format('woff2'),
-       url('../fonts/borna-bolditalic-webfont.woff') format('woff');
+    url('../fonts/borna-bolditalic-webfont.woff') format('woff');
   font-weight: 700;
   font-style: italic;
 }
@@ -115,6 +115,18 @@ $font-family-sans-serif: "Borna", system-ui, -apple-system, "Segoe UI", Roboto, 
 
 // Importar funções e variáveis do Bootstrap para poder sobrescrever/estender
 @import "bootstrap/scss/functions";
+
+// Overrides de Variáveis do Bootstrap (Devem vir ANTES do import de variables)
+// Remover glow/sombra vermelha de foco nos formulários
+$input-focus-box-shadow: none;
+$form-select-focus-box-shadow: none;
+$form-check-input-focus-box-shadow: none;
+$btn-focus-box-shadow: none;
+
+// Alterar borda de foco para cinza neutro
+$input-focus-border-color: #6B7280; // Gray 500
+$form-select-focus-border-color: #6B7280;
+
 @import "bootstrap/scss/variables";
 @import "bootstrap/scss/variables-dark";
 
@@ -191,3 +203,274 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
 // =============================================================================
 // Componente de Calendário (Range Picker)
 // =============================================================================
+
+// (Código do calendário - assumindo que já existe ou logo será adicionado, mas aqui estou apenas anexando o Multiselect)
+
+// =============================================================================
+// Componente Multiselect (Dropdown Customizado)
+// =============================================================================
+
+.dropdown-multiselect {
+  font-family: 'Borna', sans-serif !important; // Força a fonte
+  font-size: 0.875rem !important; // Tamanho 14px solicitado
+  display: inline-block;
+  vertical-align: middle;
+  width: 300px !important; // Largura fixa sugerida (pode ser ajustada)
+  max-width: 300px !important;
+  height: 42px !important; // Altura fixa no wrapper também 
+  max-height: 42px !important;
+  overflow: visible; // Permite que o menu dropdown saia do wrapper
+
+  // Garante herança para elementos de formulário que resetam fonte
+  .btn,
+  .dropdown-toggle,
+  .dropdown-menu,
+  .dropdown-item,
+  span,
+  .action-clear {
+    font-family: 'Borna', sans-serif !important;
+  }
+
+  // Estilização específica do botão Limpar filtros
+  .action-clear {
+    color: $gray-500; // Cinza padrão (neutro)
+    font-weight: 400;
+    font-size: 0.875rem;
+    padding: 0.4rem 1rem; // Altura reduzida
+    display: flex;
+    align-items: center;
+    justify-content: center; // Centraliza horizontalmente
+    width: 100%; // Garante largura total para centralizar
+    gap: 0.5rem;
+    transition: color 0.2s;
+    cursor: pointer;
+
+    &:hover {
+      background-color: transparent;
+      color: $primary; // Vermelho apenas no hover
+    }
+
+    // Ícone herda a cor do pai
+    i,
+    svg {
+      color: inherit;
+    }
+  }
+
+  .dropdown-toggle {
+    display: flex;
+    justify-content: space-between; // Texto esquerda, seta direita
+    align-items: center;
+    width: 100% !important; // Ocupa exatamente a largura do pai (300px)
+    max-width: 100% !important;
+    height: 42px !important; // Altura absoluta
+    min-height: 42px !important;
+    max-height: 42px !important;
+    line-height: 1 !important;
+    overflow: hidden !important; // Força o corte de qualquer conteúdo que saia
+    box-sizing: border-box !important;
+    gap: 0.5rem;
+    background-color: $white;
+    border: 1px solid $border-color;
+    color: $body-color;
+    padding: 0 15px !important; // Travado em 0 vertical
+    border-radius: $border-radius;
+    transition: all 0.2s;
+    margin: 0 !important;
+
+    // Seta padrão do Bootstrap (caret) oculta
+    &::after {
+      display: none !important;
+    }
+
+    margin-left: auto; // Empurra a seta para a direita extrema se justify falhar
+
+    &:hover,
+    &:focus,
+    &.show {
+      background-color: $gray-100;
+      border-color: $border-color;
+      color: $body-color;
+      box-shadow: none;
+    }
+
+    // Contador customizado (+N)
+    .badge-custom {
+      background-color: #E7E8E9 !important; // Cinza claro solicitado
+      color: #212529 !important; // Cinza escuro solicitado
+      font-weight: 500;
+      font-size: 0.75rem;
+      flex-shrink: 0; // Impede que o contador seja espremido
+      white-space: nowrap;
+    }
+
+    // Área de badges dentro do botão
+    .selected-badges {
+      display: flex;
+      flex-wrap: nowrap; // Impede que os badges pulem para a próxima linha
+      overflow: hidden; // Corta badges que excederem o espaço
+      gap: 0.25rem;
+      align-items: center;
+      flex-grow: 1; // Ocupa espaço disponível para empurrar o contador
+    }
+
+    .badge {
+      font-weight: 500;
+      font-size: 0.75rem;
+      padding: 0.35em 0.65em;
+      max-width: 110px; // Largura máxima para cada badge
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis; // O "abreviado" solicitado
+      display: inline-flex;
+      align-items: center;
+
+      // Badge de contador extra (+2)
+      &.badge-counter {
+        background-color: $gray-100;
+        color: $body-color;
+        border: 1px solid $border-color;
+        max-width: none; // Contador não abrevia
+      }
+    }
+  }
+
+
+  .dropdown-menu {
+    border-radius: 0.5rem;
+    box-shadow: $box-shadow;
+    border: 1px solid $border-color;
+    padding: 0.5rem 0;
+    margin-top: 0.25rem;
+    width: 100%;
+    min-width: auto;
+
+    // Forçar abertura para baixo
+    top: 100% !important;
+    bottom: auto !important;
+    transform: none !important;
+
+    .dropdown-header {
+      padding: 0.5rem 1rem;
+      color: $gray-600;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .dropdown-item {
+    padding: 0.35rem 0.5rem; // Reduzido para aproximar da borda
+    display: flex;
+    align-items: center;
+    gap: 0.35rem; // Reduzido entre ícone e texto
+    color: $body-color;
+    font-weight: 400;
+    cursor: pointer;
+    background-color: transparent;
+    transition: background-color 0.15s ease-in-out;
+    overflow: hidden; // Necessário para o truncamento interno
+
+    // Ícone de check (CSS Puro para garantir visualização)
+    .check-icon {
+      width: 20px; // Reduzido de 24px
+      height: 20px;
+      min-width: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none !important;
+      border: 0 !important;
+      margin-right: 0;
+      flex-shrink: 0; // Garante que o ícone não suma com texto longo
+
+      // Oculta o SVG problemático
+      svg {
+        display: none !important;
+      }
+
+      // Desenha o check com CSS
+      &::after {
+        content: '';
+        display: block;
+        width: 6px; // Largura da haste menor
+        height: 12px; // Altura da haste maior
+        border: solid transparent; // Invisível por padrão
+        border-width: 0 2px 2px 0; // Borda direita e inferior => L shape
+        transform: rotate(45deg);
+        margin-top: -2px;
+        opacity: 0;
+        transition: all 0.1s ease;
+      }
+    }
+
+    // Texto do item com truncamento
+    .item-text {
+      flex-grow: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
+    }
+
+    &:hover {
+      background-color: $gray-100;
+      color: $body-color;
+    }
+
+    // Evita o estilo padrão azul do .active do Bootstrap
+    &:active,
+    &.active {
+      background-color: $gray-100;
+      color: $body-color;
+    }
+
+    // Estado Selecionado 
+    &.selected {
+      font-weight: 500;
+      background-color: transparent;
+
+      .check-icon {
+        background: none !important;
+        border: 0 !important;
+
+        // Torna o check visível e vermelho
+        &::after {
+          border-color: $primary !important; // Vermelho
+          border-width: 0 2px 2px 0;
+          opacity: 1;
+        }
+      }
+
+      &:hover {
+        background-color: $gray-100;
+      }
+    }
+  }
+}
+
+
+// =============================================================================
+// PADRONIZAÇÃO GLOBAL DE INPUTS
+// =============================================================================
+
+.form-control,
+.form-select {
+  padding: 10px 15px; // Solicitado: 10px por 15px
+  min-height: 42px; // Altura mínima ajustada
+  font-size: 0.875rem; // 14px
+}
+
+// Ajustes proporcionais para variações de tamanho
+.form-control-sm,
+.form-select-sm {
+  min-height: 32px;
+  padding: 4px 10px;
+}
+
+.form-control-lg,
+.form-select-lg {
+  min-height: 52px;
+  padding: 14px 20px;
+}

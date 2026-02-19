@@ -37,9 +37,9 @@ const paginas = {
   helpers: paginaHelpers
 };
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // Listener global para centralizar item ativo no dropdown ao abrir
-  document.addEventListener('shown.bs.dropdown', function(event) {
+  document.addEventListener('shown.bs.dropdown', function (event) {
     const dropdownMenu = event.target.nextElementSibling; // O menu é irmão do botão toggle
     if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
       const activeItem = dropdownMenu.querySelector('.dropdown-item.active');
@@ -55,25 +55,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const botoesNav = document.querySelectorAll('.nav-link[data-pagina]');
   botoesNav.forEach(botao => {
-    botao.addEventListener('click', function() {
+    botao.addEventListener('click', function () {
       const pagina = this.dataset.pagina;
-      
+
       // Remove active de todos os botões
       botoesNav.forEach(b => {
         b.classList.remove('active', 'text-primary', 'fw-bold');
         b.classList.add('text-body');
       });
-      
+
       // Adiciona active ao clicado
       this.classList.add('active', 'text-primary', 'fw-bold');
       this.classList.remove('text-body');
-      
+
       carregarPagina(pagina);
     });
   });
 
   // Fecha calendário flutuante quando o usuário clica fora dele ou dos campos de data
-  document.addEventListener('click', function(event) {
+  document.addEventListener('click', function (event) {
     const cal = document.getElementById('demo-calendar');
     if (!cal) return;
     // só tenta fechar se estiver visível
@@ -125,7 +125,7 @@ function inicializarComponentesBootstrap() {
 function toggleCodigo(botao) {
   const card = botao.closest('.card');
   const codigoArea = card.querySelector('.card-footer');
-  
+
   if (codigoArea.classList.contains('d-none')) {
     codigoArea.classList.remove('d-none');
     botao.innerHTML = '<i class="bi bi-code-slash me-1"></i> Ocultar';
@@ -139,14 +139,14 @@ function toggleCodigo(botao) {
 
 function trocarAba(botaoAba, abaAlvo) {
   const codigoArea = botaoAba.closest('.card-footer');
-  
+
   // Remove active de todas as abas
   codigoArea.querySelectorAll('.nav-link').forEach(aba => aba.classList.remove('active'));
   botaoAba.classList.add('active');
-  
+
   // Esconde todos os conteúdos e mostra o alvo
   codigoArea.querySelectorAll('.tab-pane').forEach(conteudo => {
-    if(conteudo.id === abaAlvo) {
+    if (conteudo.id === abaAlvo) {
       conteudo.classList.add('show', 'active');
     } else {
       conteudo.classList.remove('show', 'active');
@@ -156,7 +156,7 @@ function trocarAba(botaoAba, abaAlvo) {
 
 function componenteComCodigo(titulo, preview, codigoEasyjur, codigoLegalops, descricao = '') {
   const idUnico = 'code-' + Math.random().toString(36).substr(2, 9);
-  
+
   return `
     <div class="card mb-4 shadow-sm">
       <div class="card-header d-flex justify-content-between align-items-center bg-body-tertiary">
@@ -203,42 +203,42 @@ window.dsViewYear = 2026;
 
 const dsMonthsNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
-window.dsBuildMonthHtml = function(month, year) {
+window.dsBuildMonthHtml = function (month, year) {
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const prevMonthDays = new Date(year, month, 0).getDate();
-  
+
   const today = new Date();
   const isThisMonth = today.getMonth() === month && today.getFullYear() === year;
-  
+
   let html = '';
-  
+
   // Dias do mês anterior (cinza)
   for (let i = firstDay - 1; i >= 0; i--) {
     html += `<div class="text-muted calendar-day opacity-25" style="width: 14.28%">${prevMonthDays - i}</div>`;
   }
-  
+
   // Dias do mês atual
   for (let d = 1; d <= daysInMonth; d++) {
     const dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
     const isToday = isThisMonth && today.getDate() === d;
     // Removida a classe calendar-day-today para evitar conflito de CSS com a seleção
     const todayIndicator = isToday ? '<span class="position-absolute bg-danger rounded-circle" style="width: 5px; height: 5px; top: 4px; right: 4px;"></span>' : '';
-    
+
     html += `<div class="text-dark cursor-pointer calendar-day" style="width: 14.28%" data-date="${dateStr}" onclick="window.dsSelectDate(this, ${d}, '${(month + 1).toString().padStart(2, '0')}', ${year})" onmouseover="window.dsHoverDate(this)" onmouseout="window.dsClearHover()">${d}${todayIndicator}</div>`;
   }
-  
+
   // Dias do próximo mês para fechar a grade (opcional, para manter alinhamento)
   const totalCells = firstDay + daysInMonth;
   const nextDays = (7 - (totalCells % 7)) % 7;
   for (let i = 1; i <= nextDays; i++) {
     html += `<div class="text-muted calendar-day opacity-25" style="width: 14.28%">${i}</div>`;
   }
-  
+
   return html;
 };
 
-window.dsUpdateCalendar = function() {
+window.dsUpdateCalendar = function () {
   const container = document.getElementById('demo-calendar');
   if (!container) return;
 
@@ -250,12 +250,12 @@ window.dsUpdateCalendar = function() {
   // Atualiza nomes e grades
   const grids = container.querySelectorAll('.calendar-grid');
   const monthButtons = container.querySelectorAll('.dropdown-toggle'); // Simplificado, assume ordem
-  
+
   // Mês 1
   container.querySelector('#month-1-name').innerText = dsMonthsNames[m1];
   container.querySelector('#year-1-name').innerText = y1;
   grids[0].querySelector('.flex-wrap').innerHTML = window.dsBuildMonthHtml(m1, y1);
-  
+
   // Mês 2
   container.querySelector('#month-2-name').innerText = dsMonthsNames[m2];
   container.querySelector('#year-2-name').innerText = y2;
@@ -284,7 +284,7 @@ window.dsUpdateCalendar = function() {
       el.classList.remove('text-dark');
       el.classList.add('calendar-day-range-end');
     });
-    
+
     // Intervalo
     document.querySelectorAll('.calendar-day').forEach(d => {
       const dDateStr = d.getAttribute('data-date');
@@ -298,17 +298,17 @@ window.dsUpdateCalendar = function() {
   }
 };
 
-window.dsSetMonth = function(m) {
+window.dsSetMonth = function (m) {
   window.dsViewMonth = m;
   window.dsUpdateCalendar();
 };
 
-window.dsSetYear = function(y) {
+window.dsSetYear = function (y) {
   window.dsViewYear = y;
   window.dsUpdateCalendar();
 };
 
-window.dsEnableEdit = function(type, event) {
+window.dsEnableEdit = function (type, event) {
   event.stopPropagation();
   const input = document.getElementById(type === 'start' ? 'range-start-input' : 'range-end-input');
   if (input) {
@@ -317,7 +317,7 @@ window.dsEnableEdit = function(type, event) {
   }
 };
 
-window.dsHandleInput = function(type, input) {
+window.dsHandleInput = function (type, input) {
   // 1. Limpa qualquer caractere não numérico para processar a lógica
   let raw = input.value.replace(/\D/g, '');
   if (raw.length > 8) raw = raw.slice(0, 8);
@@ -342,69 +342,69 @@ window.dsHandleInput = function(type, input) {
     const isValidDate = date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
 
     if (isValidDate) {
-        input.classList.remove('is-invalid'); // Remove erro visual se houver
-        
-        // Atualiza a seleção
-        const el = null;
-        if (type === 'start') {
-           startSelection = { date: date, str: val, el: el };
-           input.style.color = '#212529';
-        } else {
-           endSelection = { date: date, str: val, el: el };
-           input.style.color = '#212529';
-        }
-        
-        // Atualiza o calendário para focar na data digitada
-        window.dsSetMonth(month - 1);
-        window.dsSetYear(year);
+      input.classList.remove('is-invalid'); // Remove erro visual se houver
+
+      // Atualiza a seleção
+      const el = null;
+      if (type === 'start') {
+        startSelection = { date: date, str: val, el: el };
+        input.style.color = '#212529';
+      } else {
+        endSelection = { date: date, str: val, el: el };
+        input.style.color = '#212529';
+      }
+
+      // Atualiza o calendário para focar na data digitada
+      window.dsSetMonth(month - 1);
+      window.dsSetYear(year);
     } else {
-        // Data inválida (ex: dia 32, mês 13)
-        // Opcional: Adicionar classe de erro visual ou limpar seleção
-        // input.classList.add('is-invalid'); 
-        if (type === 'start') startSelection = null;
-        else endSelection = null;
-        window.dsUpdateCalendar();
+      // Data inválida (ex: dia 32, mês 13)
+      // Opcional: Adicionar classe de erro visual ou limpar seleção
+      // input.classList.add('is-invalid'); 
+      if (type === 'start') startSelection = null;
+      else endSelection = null;
+      window.dsUpdateCalendar();
     }
   } else {
     // Se o usuário apagou ou ainda não terminou de digitar
     if (raw.length === 0) {
-        if (type === 'start') {
-           startSelection = null;
-           input.style.color = '#5c6b7f';
-        } else {
-           endSelection = null;
-           input.style.color = '#5c6b7f';
-        }
-        window.dsUpdateCalendar();
+      if (type === 'start') {
+        startSelection = null;
+        input.style.color = '#5c6b7f';
+      } else {
+        endSelection = null;
+        input.style.color = '#5c6b7f';
+      }
+      window.dsUpdateCalendar();
     }
   }
 };
 
-window.dsFillCurrentDate = function(type) {
+window.dsFillCurrentDate = function (type) {
   const today = new Date();
-  today.setHours(0,0,0,0);
+  today.setHours(0, 0, 0, 0);
   const day = today.getDate().toString().padStart(2, '0');
   const month = (today.getMonth() + 1).toString().padStart(2, '0');
   const year = today.getFullYear();
   const dateStr = `${day}/${month}/${year}`;
   const isoDate = `${year}-${month}-${day}`;
-  
+
   // Tenta encontrar o elemento visual se estiver visível
   const el = document.querySelector(`.calendar-day[data-date="${isoDate}"]`);
-  
+
   if (type === 'start') {
     startSelection = { date: today, str: dateStr, el: el };
-    
+
     // Se existir data final e for anterior à inicial, limpa a final
     if (endSelection && endSelection.date < today) {
-       endSelection = null;
-       const displayEnd = document.getElementById('range-end-input');
-       if (displayEnd) {
-          displayEnd.value = '';
-          displayEnd.style.color = '#5c6b7f';
-       }
+      endSelection = null;
+      const displayEnd = document.getElementById('range-end-input');
+      if (displayEnd) {
+        displayEnd.value = '';
+        displayEnd.style.color = '#5c6b7f';
+      }
     }
-    
+
     const displayStart = document.getElementById('range-start-input');
     if (displayStart) {
       displayStart.value = dateStr;
@@ -413,26 +413,26 @@ window.dsFillCurrentDate = function(type) {
   } else if (type === 'end') {
     // Se não tiver início ou início for maior que fim, ajusta o início para hoje também
     if (!startSelection || startSelection.date > today) {
-       startSelection = { date: today, str: dateStr, el: el };
-       const displayStart = document.getElementById('range-start-input');
-       if (displayStart) {
-         displayStart.value = dateStr;
-         displayStart.style.color = '#212529';
-       }
+      startSelection = { date: today, str: dateStr, el: el };
+      const displayStart = document.getElementById('range-start-input');
+      if (displayStart) {
+        displayStart.value = dateStr;
+        displayStart.style.color = '#212529';
+      }
     }
-  
+
     endSelection = { date: today, str: dateStr, el: el };
     const displayEnd = document.getElementById('range-end-input');
     if (displayEnd) {
-        displayEnd.value = dateStr;
-        displayEnd.style.color = '#212529';
+      displayEnd.value = dateStr;
+      displayEnd.style.color = '#212529';
     }
   }
-  
+
   window.dsUpdateCalendar();
 };
 
-window.dsSelectDate = function(el, day, month, year) {
+window.dsSelectDate = function (el, day, month, year) {
   const displayStart = document.getElementById('range-start-input');
   const displayEnd = document.getElementById('range-end-input');
   const dateStr = `${day.toString().padStart(2, '0')}/${month}/${year}`;
@@ -442,7 +442,7 @@ window.dsSelectDate = function(el, day, month, year) {
     // Reset e define início
     startSelection = { el, date: dateObj, str: dateStr };
     endSelection = null;
-    
+
     // Limpa classes de todos os dias
     document.querySelectorAll('.calendar-day').forEach(d => {
       d.classList.remove('bg-primary', 'text-white', 'calendar-day-in-range', 'calendar-day-range-start', 'calendar-day-range-end');
@@ -454,7 +454,7 @@ window.dsSelectDate = function(el, day, month, year) {
       el.classList.add('bg-primary', 'text-white');
       el.classList.remove('text-dark');
     }
-    
+
     if (displayStart) {
       displayStart.value = dateStr;
       displayStart.style.color = '#212529';
@@ -466,22 +466,22 @@ window.dsSelectDate = function(el, day, month, year) {
   } else {
     // Se clicar em data anterior à de início, vira o novo início
     if (dateObj < startSelection.date) {
-        if (startSelection.el) {
-          startSelection.el.classList.remove('bg-primary', 'text-white');
-          startSelection.el.classList.add('text-dark');
-        }
-        
-        startSelection = { el, date: dateObj, str: dateStr };
-        if (el) {
-          el.classList.add('bg-primary', 'text-white');
-          el.classList.remove('text-dark');
-        }
-        
-        if (displayStart) {
-          displayStart.value = dateStr;
-          displayStart.style.color = '#212529';
-        }
-        return;
+      if (startSelection.el) {
+        startSelection.el.classList.remove('bg-primary', 'text-white');
+        startSelection.el.classList.add('text-dark');
+      }
+
+      startSelection = { el, date: dateObj, str: dateStr };
+      if (el) {
+        el.classList.add('bg-primary', 'text-white');
+        el.classList.remove('text-dark');
+      }
+
+      if (displayStart) {
+        displayStart.value = dateStr;
+        displayStart.style.color = '#212529';
+      }
+      return;
     }
 
     endSelection = { el, date: dateObj, str: dateStr };
@@ -518,7 +518,7 @@ window.dsSelectDate = function(el, day, month, year) {
   }
 };
 
-window.dsPrevMonth = function() {
+window.dsPrevMonth = function () {
   window.dsViewMonth--;
   if (window.dsViewMonth < 0) {
     window.dsViewMonth = 11;
@@ -527,7 +527,7 @@ window.dsPrevMonth = function() {
   window.dsUpdateCalendar();
 };
 
-window.dsNextMonth = function() {
+window.dsNextMonth = function () {
   window.dsViewMonth++;
   if (window.dsViewMonth > 11) {
     window.dsViewMonth = 0;
@@ -536,7 +536,7 @@ window.dsNextMonth = function() {
   window.dsUpdateCalendar();
 };
 
-window.dsFormatDate = function(date) {
+window.dsFormatDate = function (date) {
   const d = date.getDate();
   const m = date.getMonth() + 1;
   const y = date.getFullYear();
@@ -695,7 +695,7 @@ function paginaLegalOps() {
       <p>Isso permite que você utilize os valores oficiais diretamente dentro dos seus Styled Components, sem hardcode.</p>
 
       ${componenteComCodigo('Exemplo de Componente React',
-        `<div class="p-4 border rounded bg-light">
+    `<div class="p-4 border rounded bg-light">
           <div style="font-family: monospace;">
             <span style="color: #d63384;">const</span> <span style="color: #0d6efd;">CardProcesso</span> = <span style="color: #0d6efd;">styled</span>.div\`<br>
             &nbsp;&nbsp;background-color: <span style="color: #198754;">var(--bs-body-bg)</span>;<br>
@@ -706,10 +706,10 @@ function paginaLegalOps() {
             \`;
           </div>
         </div>`,
-        `<div class="card p-3 shadow-sm">
+    `<div class="card p-3 shadow-sm">
   Componente estilizado com tokens
 </div>`,
-        `import styled from 'styled-components';
+    `import styled from 'styled-components';
 
 const CardProcesso = styled.div\`
   background-color: var(--bs-body-bg);
@@ -721,8 +721,8 @@ const CardProcesso = styled.div\`
     border-color: var(--bs-primary);
   }
 \`;`,
-        'Sempre prefira usar var(--bs-...) ao invés de valores hexadecimais fixos.'
-      )}
+    'Sempre prefira usar var(--bs-...) ao invés de valores hexadecimais fixos.'
+  )}
 
       <h3 class="h4 fw-bold mt-5 mb-3">Composição com Classes</h3>
       <p>Você pode (e deve) combinar o poder do Styled Components com as classes utilitárias do Bootstrap para evitar escrever CSS repetitivo.</p>
@@ -925,7 +925,7 @@ function paginaTipografia() {
       <p class="lead text-muted mb-4">Fonte Borna em toda a interface. Títulos, parágrafos, listas e citações seguem um padrão consistente para leitura e hierarquia.</p>
 
       ${componenteComCodigo('Headings',
-        `<div class="d-flex flex-column gap-2">
+    `<div class="d-flex flex-column gap-2">
           <h1>h1. Heading</h1>
           <h2>h2. Heading</h2>
           <h3>h3. Heading</h3>
@@ -933,7 +933,7 @@ function paginaTipografia() {
           <h5>h5. Heading</h5>
           <h6>h6. Heading</h6>
         </div>`,
-        `<div class="rebranding">
+    `<div class="rebranding">
   <h1>h1. Heading</h1>
   <h2>h2. Heading</h2>
   <h3>h3. Heading</h3>
@@ -941,73 +941,73 @@ function paginaTipografia() {
   <h5>h5. Heading</h5>
   <h6>h6. Heading</h6>
 </div>`,
-        `<h1>h1. Heading</h1>
+    `<h1>h1. Heading</h1>
 <h2>h2. Heading</h2>
 <h3>h3. Heading</h3>`,
-        'Tags h1-h6 com tamanhos padrão do Bootstrap'
-      )}
+    'Tags h1-h6 com tamanhos padrão do Bootstrap'
+  )}
 
       ${componenteComCodigo('Display Headings',
-        `<div class="d-flex flex-column gap-2">
+    `<div class="d-flex flex-column gap-2">
           <h1 class="display-1">Display 1</h1>
           <h1 class="display-2">Display 2</h1>
           <h1 class="display-3">Display 3</h1>
         </div>`,
-        `<div class="rebranding">
+    `<div class="rebranding">
   <h1 class="display-1">Display 1</h1>
   <h1 class="display-2">Display 2</h1>
   <h1 class="display-3">Display 3</h1>
 </div>`,
-        `<Text variant="display1">Display 1</Text>
+    `<Text variant="display1">Display 1</Text>
 <Text variant="display2">Display 2</Text>`,
-        'Headings maiores para destaque'
-      )}
+    'Headings maiores para destaque'
+  )}
 
       ${componenteComCodigo('Texto',
-        `<div class="d-flex flex-column gap-2">
+    `<div class="d-flex flex-column gap-2">
           <p class="lead">Parágrafo de destaque (lead).</p>
           <p>Parágrafo normal com <strong>texto em negrito</strong>, <em>itálico</em> e <a href="#">link</a>.</p>
           <p><small>Texto pequeno (small)</small></p>
           <p class="text-muted">Texto secundário (muted)</p>
         </div>`,
-        `<div class="rebranding">
+    `<div class="rebranding">
   <p class="lead">Parágrafo de destaque.</p>
   <p>Parágrafo normal com <strong>negrito</strong>, <em>itálico</em>.</p>
   <p><small>Texto pequeno</small></p>
   <p class="text-muted">Texto secundário</p>
 </div>`,
-        `<Text variant="lead">Parágrafo de destaque</Text>
+    `<Text variant="lead">Parágrafo de destaque</Text>
 <Text>Parágrafo normal</Text>
 <Text size="sm">Texto pequeno</Text>`,
-        ''
-      )}
+    ''
+  )}
 
       ${componenteComCodigo('Elementos inline (destaque, negrito, itálico)',
-        `<p>Use <mark>mark</mark> para destacar, <strong>strong</strong> para negrito, <em>em</em> para itálico.</p>
+    `<p>Use <mark>mark</mark> para destacar, <strong>strong</strong> para negrito, <em>em</em> para itálico.</p>
         <p><small class="text-muted">Small</small> para texto secundário. <abbr title="Exemplo">abbr</abbr> com title mostra a explicação no hover.</p>`,
-        `<p>Texto com <mark>destaque</mark>, <strong>negrito</strong>, <em>itálico</em>.</p>
+    `<p>Texto com <mark>destaque</mark>, <strong>negrito</strong>, <em>itálico</em>.</p>
 <p><abbr title="Significado">abbr</abbr></p>`,
-        `mark, strong, em, small, abbr`,
-        ''
-      )}
+    `mark, strong, em, small, abbr`,
+    ''
+  )}
 
       ${componenteComCodigo('Citação (blockquote)',
-        `<figure>
+    `<figure>
           <blockquote class="blockquote">
             <p>Uma citação bem conhecida, dentro de um blockquote.</p>
           </blockquote>
           <figcaption class="blockquote-footer">Autor no <cite>Livro ou Fonte</cite></figcaption>
         </figure>`,
-        `<blockquote class="blockquote">
+    `<blockquote class="blockquote">
   <p>Texto da citação.</p>
 </blockquote>
 <figcaption class="blockquote-footer">Autor, fonte</figcaption>`,
-        `blockquote e blockquote-footer para atribuição`,
-        ''
-      )}
+    `blockquote e blockquote-footer para atribuição`,
+    ''
+  )}
 
       ${componenteComCodigo('Listas',
-        `<ul class="list-unstyled mb-0">
+    `<ul class="list-unstyled mb-0">
           <li>Item sem marcador (list-unstyled)</li>
           <li>Outro item</li>
         </ul>
@@ -1015,11 +1015,11 @@ function paginaTipografia() {
           <li>Lista ordenada</li>
           <li>Segundo item</li>
         </ol>`,
-        `<ul class="list-unstyled">...</ul>
+    `<ul class="list-unstyled">...</ul>
 <ol>...</ol>`,
-        `list-unstyled remove os marcadores da ul`,
-        ''
-      )}
+    `list-unstyled remove os marcadores da ul`,
+    ''
+  )}
     </section>
   `;
 }
@@ -1082,29 +1082,29 @@ function paginaGrid() {
       <p class="mb-4">O grid usa <strong>containers</strong>, <strong>rows</strong> e <strong>colunas</strong> para alinhar o conteúdo. As colunas têm <em>gutter</em> (espaçamento horizontal); você pode usar <code>.gx-*</code>, <code>.gy-*</code> ou <code>.g-*</code> para alterar. Breakpoints são baseados em <code>min-width</code> (ex.: <code>.col-sm-4</code> vale de sm em diante).</p>
 
       ${componenteComCodigo('Exemplo básico',
-        `<div class="container border rounded p-3 bg-light text-center">
+    `<div class="container border rounded p-3 bg-light text-center">
           <div class="row">
             <div class="col"><div class="bg-primary text-white p-3 rounded">Column</div></div>
             <div class="col"><div class="bg-primary text-white p-3 rounded">Column</div></div>
             <div class="col"><div class="bg-primary text-white p-3 rounded">Column</div></div>
           </div>
         </div>`,
-        `<div class="container text-center">
+    `<div class="container text-center">
   <div class="row">
     <div class="col">Column</div>
     <div class="col">Column</div>
     <div class="col">Column</div>
   </div>
 </div>`,
-        `import { Grid, Row, Col } from '@legalops/ui';
+    `import { Grid, Row, Col } from '@legalops/ui';
 
 <Grid><Row>
   <Col>Column</Col>
   <Col>Column</Col>
   <Col>Column</Col>
 </Row></Grid>`,
-        'Três colunas de largura igual em todos os viewports.'
-      )}
+    'Três colunas de largura igual em todos os viewports.'
+  )}
 
       <h3 class="h5 fw-bold mt-5 mb-3">Opções do grid</h3>
       <p class="text-muted small mb-3">Seis níveis de breakpoint: xs, sm, md, lg, xl, xxl. Cada um tem prefixo de classe e max-width de container.</p>
@@ -1159,7 +1159,7 @@ function paginaGrid() {
       <h3 class="h5 fw-bold mt-5 mb-3">Auto-layout (colunas de largura igual)</h3>
       <p class="text-muted small mb-3">Use <code>.col</code> sem número para colunas iguais; o número de <code>.col</code> define quantas colunas existem na row.</p>
       ${componenteComCodigo('Largura igual — 2 e 3 colunas',
-        `<div class="container border rounded p-3 bg-light text-center">
+    `<div class="container border rounded p-3 bg-light text-center">
           <div class="row mb-2">
             <div class="col"><div class="bg-primary text-white p-3 rounded">1 of 2</div></div>
             <div class="col"><div class="bg-primary text-white p-3 rounded">2 of 2</div></div>
@@ -1170,7 +1170,7 @@ function paginaGrid() {
             <div class="col"><div class="bg-secondary text-white p-3 rounded">3 of 3</div></div>
           </div>
         </div>`,
-        `<div class="container text-center">
+    `<div class="container text-center">
   <div class="row">
     <div class="col">1 of 2</div>
     <div class="col">2 of 2</div>
@@ -1181,15 +1181,15 @@ function paginaGrid() {
     <div class="col">3 of 3</div>
   </div>
 </div>`,
-        `<Row><Col>1 of 2</Col><Col>2 of 2</Col></Row>
+    `<Row><Col>1 of 2</Col><Col>2 of 2</Col></Row>
 <Row><Col>1 of 3</Col><Col>2 of 3</Col><Col>3 of 3</Col></Row>`,
-        ''
-      )}
+    ''
+  )}
 
       <h4 class="h6 fw-bold mt-4 mb-2">Definir largura de uma coluna</h4>
       <p class="text-muted small mb-3">Uma coluna com <code>.col-6</code> ou <code>.col-5</code>; as irmãs sem número se ajustam ao espaço restante.</p>
       ${componenteComCodigo('Uma coluna mais larga',
-        `<div class="container border rounded p-3 bg-light text-center">
+    `<div class="container border rounded p-3 bg-light text-center">
           <div class="row mb-2">
             <div class="col"><div class="bg-primary text-white p-3 rounded">1 of 3</div></div>
             <div class="col-6"><div class="bg-secondary text-white p-3 rounded">2 of 3 (wider)</div></div>
@@ -1201,7 +1201,7 @@ function paginaGrid() {
             <div class="col"><div class="bg-primary text-white p-3 rounded">3 of 3</div></div>
           </div>
         </div>`,
-        `<div class="container text-center">
+    `<div class="container text-center">
   <div class="row">
     <div class="col">1 of 3</div>
     <div class="col-6">2 of 3 (wider)</div>
@@ -1213,18 +1213,18 @@ function paginaGrid() {
     <div class="col">3 of 3</div>
   </div>
 </div>`,
-        `<Row>
+    `<Row>
   <Col>1 of 3</Col>
   <Col size={6}>2 of 3 (wider)</Col>
   <Col>3 of 3</Col>
 </Row>`,
-        ''
-      )}
+    ''
+  )}
 
       <h4 class="h6 fw-bold mt-4 mb-2">Largura variável (conteúdo)</h4>
       <p class="text-muted small mb-3">Use <code>.col-{breakpoint}-auto</code> para a coluna seguir a largura natural do conteúdo.</p>
       ${componenteComCodigo('col-md-auto',
-        `<div class="container border rounded p-3 bg-light text-center">
+    `<div class="container border rounded p-3 bg-light text-center">
           <div class="row justify-content-md-center mb-2">
             <div class="col col-lg-2"><div class="bg-primary text-white p-3 rounded">1 of 3</div></div>
             <div class="col-md-auto"><div class="bg-secondary text-white p-3 rounded">Variable width content</div></div>
@@ -1236,7 +1236,7 @@ function paginaGrid() {
             <div class="col col-lg-2"><div class="bg-primary text-white p-3 rounded">3 of 3</div></div>
           </div>
         </div>`,
-        `<div class="container text-center">
+    `<div class="container text-center">
   <div class="row justify-content-md-center">
     <div class="col col-lg-2">1 of 3</div>
     <div class="col-md-auto">Variable width content</div>
@@ -1248,16 +1248,16 @@ function paginaGrid() {
     <div class="col col-lg-2">3 of 3</div>
   </div>
 </div>`,
-        `Row com justify-content-md-center e Col com col-md-auto`,
-        ''
-      )}
+    `Row com justify-content-md-center e Col com col-md-auto`,
+    ''
+  )}
 
       <h3 class="h5 fw-bold mt-5 mb-3">Classes responsivas</h3>
 
       <h4 class="h6 fw-bold mt-4 mb-2">Todos os breakpoints</h4>
       <p class="text-muted small mb-3"><code>.col</code> e <code>.col-*</code> valem para todos os tamanhos de tela.</p>
       ${componenteComCodigo('.col e .col-8 / .col-4',
-        `<div class="container border rounded p-3 bg-light text-center">
+    `<div class="container border rounded p-3 bg-light text-center">
           <div class="row mb-2">
             <div class="col"><div class="bg-primary text-white p-3 rounded">col</div></div>
             <div class="col"><div class="bg-primary text-white p-3 rounded">col</div></div>
@@ -1269,7 +1269,7 @@ function paginaGrid() {
             <div class="col-4"><div class="bg-secondary text-white p-3 rounded">col-4</div></div>
           </div>
         </div>`,
-        `<div class="container text-center">
+    `<div class="container text-center">
   <div class="row">
     <div class="col">col</div>
     <div class="col">col</div>
@@ -1281,14 +1281,14 @@ function paginaGrid() {
     <div class="col-4">col-4</div>
   </div>
 </div>`,
-        `Colunas iguais com .col; depois .col-8 e .col-4`,
-        ''
-      )}
+    `Colunas iguais com .col; depois .col-8 e .col-4`,
+    ''
+  )}
 
       <h4 class="h6 fw-bold mt-4 mb-2">Empilhado → horizontal</h4>
       <p class="text-muted small mb-3">Com <code>.col-sm-*</code>, no mobile fica empilhado; a partir de sm (≥576px) fica horizontal.</p>
       ${componenteComCodigo('.col-sm-8 e .col-sm-4 / .col-sm',
-        `<div class="container border rounded p-3 bg-light text-center">
+    `<div class="container border rounded p-3 bg-light text-center">
           <div class="row mb-2">
             <div class="col-sm-8"><div class="bg-primary text-white p-3 rounded">col-sm-8</div></div>
             <div class="col-sm-4"><div class="bg-secondary text-white p-3 rounded">col-sm-4</div></div>
@@ -1299,7 +1299,7 @@ function paginaGrid() {
             <div class="col-sm"><div class="bg-primary text-white p-3 rounded">col-sm</div></div>
           </div>
         </div>`,
-        `<div class="container text-center">
+    `<div class="container text-center">
   <div class="row">
     <div class="col-sm-8">col-sm-8</div>
     <div class="col-sm-4">col-sm-4</div>
@@ -1310,14 +1310,14 @@ function paginaGrid() {
     <div class="col-sm">col-sm</div>
   </div>
 </div>`,
-        `Responsivo por breakpoint sm`,
-        ''
-      )}
+    `Responsivo por breakpoint sm`,
+    ''
+  )}
 
       <h4 class="h6 fw-bold mt-4 mb-2">Mix and match</h4>
       <p class="text-muted small mb-3">Combine classes por breakpoint (ex.: <code>.col-6 .col-md-4</code>) para layouts diferentes em cada tamanho.</p>
       ${componenteComCodigo('Mix: col-md-8, col-6 col-md-4, col-6',
-        `<div class="container border rounded p-3 bg-light text-center">
+    `<div class="container border rounded p-3 bg-light text-center">
           <div class="row mb-2">
             <div class="col-md-8"><div class="bg-primary text-white p-3 rounded">.col-md-8</div></div>
             <div class="col-6 col-md-4"><div class="bg-secondary text-white p-3 rounded">.col-6 .col-md-4</div></div>
@@ -1332,7 +1332,7 @@ function paginaGrid() {
             <div class="col-6"><div class="bg-secondary text-white p-3 rounded">.col-6</div></div>
           </div>
         </div>`,
-        `<div class="container text-center">
+    `<div class="container text-center">
   <div class="row">
     <div class="col-md-8">.col-md-8</div>
     <div class="col-6 col-md-4">.col-6 .col-md-4</div>
@@ -1347,14 +1347,14 @@ function paginaGrid() {
     <div class="col-6">.col-6</div>
   </div>
 </div>`,
-        `Combinação de col e col-md-*`,
-        ''
-      )}
+    `Combinação de col e col-md-*`,
+    ''
+  )}
 
       <h3 class="h5 fw-bold mt-5 mb-3">Row columns (.row-cols-*)</h3>
       <p class="text-muted small mb-3">Defina na <code>.row</code> quantas colunas terão os filhos: <code>.row-cols-2</code>, <code>.row-cols-3</code>, <code>.row-cols-4</code>, <code>.row-cols-auto</code>. Use também <code>.row-cols-1 .row-cols-sm-2 .row-cols-md-4</code> para responsivo.</p>
       ${componenteComCodigo('row-cols-2',
-        `<div class="container border rounded p-3 bg-light text-center">
+    `<div class="container border rounded p-3 bg-light text-center">
           <div class="row row-cols-2">
             <div class="col"><div class="bg-primary text-white p-3 rounded mb-2">Column</div></div>
             <div class="col"><div class="bg-primary text-white p-3 rounded mb-2">Column</div></div>
@@ -1362,7 +1362,7 @@ function paginaGrid() {
             <div class="col"><div class="bg-primary text-white p-3 rounded mb-2">Column</div></div>
           </div>
         </div>`,
-        `<div class="container text-center">
+    `<div class="container text-center">
   <div class="row row-cols-2">
     <div class="col">Column</div>
     <div class="col">Column</div>
@@ -1370,11 +1370,11 @@ function paginaGrid() {
     <div class="col">Column</div>
   </div>
 </div>`,
-        `Dois itens por linha`,
-        ''
-      )}
+    `Dois itens por linha`,
+    ''
+  )}
       ${componenteComCodigo('row-cols-3',
-        `<div class="container border rounded p-3 bg-light text-center">
+    `<div class="container border rounded p-3 bg-light text-center">
           <div class="row row-cols-3">
             <div class="col"><div class="bg-primary text-white p-3 rounded mb-2">Column</div></div>
             <div class="col"><div class="bg-primary text-white p-3 rounded mb-2">Column</div></div>
@@ -1382,17 +1382,17 @@ function paginaGrid() {
             <div class="col"><div class="bg-primary text-white p-3 rounded mb-2">Column</div></div>
           </div>
         </div>`,
-        `<div class="row row-cols-3">
+    `<div class="row row-cols-3">
   <div class="col">Column</div>
   <div class="col">Column</div>
   <div class="col">Column</div>
   <div class="col">Column</div>
 </div>`,
-        `Três colunas por linha`,
-        ''
-      )}
+    `Três colunas por linha`,
+    ''
+  )}
       ${componenteComCodigo('row-cols-auto',
-        `<div class="container border rounded p-3 bg-light text-center">
+    `<div class="container border rounded p-3 bg-light text-center">
           <div class="row row-cols-auto">
             <div class="col"><div class="bg-primary text-white p-3 rounded mb-2">Column</div></div>
             <div class="col"><div class="bg-primary text-white p-3 rounded mb-2">Column</div></div>
@@ -1400,17 +1400,17 @@ function paginaGrid() {
             <div class="col"><div class="bg-primary text-white p-3 rounded mb-2">Column</div></div>
           </div>
         </div>`,
-        `<div class="row row-cols-auto">
+    `<div class="row row-cols-auto">
   <div class="col">Column</div>
   <div class="col">Column</div>
   <div class="col">Column</div>
   <div class="col">Column</div>
 </div>`,
-        `Largura natural das colunas`,
-        ''
-      )}
+    `Largura natural das colunas`,
+    ''
+  )}
       ${componenteComCodigo('row-cols-4',
-        `<div class="container border rounded p-3 bg-light text-center">
+    `<div class="container border rounded p-3 bg-light text-center">
           <div class="row row-cols-4">
             <div class="col"><div class="bg-primary text-white p-3 rounded mb-2">Column</div></div>
             <div class="col"><div class="bg-primary text-white p-3 rounded mb-2">Column</div></div>
@@ -1419,17 +1419,17 @@ function paginaGrid() {
             <div class="col"><div class="bg-primary text-white p-3 rounded mb-2">Column</div></div>
           </div>
         </div>`,
-        `<div class="row row-cols-4">
+    `<div class="row row-cols-4">
   <div class="col">Column</div>
   <div class="col">Column</div>
   <div class="col">Column</div>
   <div class="col">Column</div>
 </div>`,
-        `Quatro colunas por linha`,
-        ''
-      )}
+    `Quatro colunas por linha`,
+    ''
+  )}
       ${componenteComCodigo('row-cols-4 com uma col-6',
-        `<div class="container border rounded p-3 bg-light text-center">
+    `<div class="container border rounded p-3 bg-light text-center">
           <div class="row row-cols-4">
             <div class="col"><div class="bg-primary text-white p-3 rounded mb-2">Column</div></div>
             <div class="col"><div class="bg-primary text-white p-3 rounded mb-2">Column</div></div>
@@ -1437,17 +1437,17 @@ function paginaGrid() {
             <div class="col"><div class="bg-primary text-white p-3 rounded mb-2">Column</div></div>
           </div>
         </div>`,
-        `<div class="row row-cols-4">
+    `<div class="row row-cols-4">
   <div class="col">Column</div>
   <div class="col">Column</div>
   <div class="col-6">Column</div>
   <div class="col">Column</div>
 </div>`,
-        `Uma coluna ocupa 6; as outras seguem row-cols-4`,
-        ''
-      )}
+    `Uma coluna ocupa 6; as outras seguem row-cols-4`,
+    ''
+  )}
       ${componenteComCodigo('row-cols responsivo (1 / sm-2 / md-4)',
-        `<div class="container border rounded p-3 bg-light text-center">
+    `<div class="container border rounded p-3 bg-light text-center">
           <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4">
             <div class="col"><div class="bg-primary text-white p-3 rounded">Column</div></div>
             <div class="col"><div class="bg-primary text-white p-3 rounded">Column</div></div>
@@ -1455,20 +1455,20 @@ function paginaGrid() {
             <div class="col"><div class="bg-primary text-white p-3 rounded">Column</div></div>
           </div>
         </div>`,
-        `<div class="row row-cols-1 row-cols-sm-2 row-cols-md-4">
+    `<div class="row row-cols-1 row-cols-sm-2 row-cols-md-4">
   <div class="col">Column</div>
   <div class="col">Column</div>
   <div class="col">Column</div>
   <div class="col">Column</div>
 </div>`,
-        `1 coluna no mobile, 2 em sm, 4 em md+`,
-        ''
-      )}
+    `1 coluna no mobile, 2 em sm, 4 em md+`,
+    ''
+  )}
 
       <h3 class="h5 fw-bold mt-5 mb-3">Aninhamento (Nesting)</h3>
       <p class="text-muted small mb-3">Dentro de uma <code>.col-*</code>, adicione uma nova <code>.row</code> e novas <code>.col-*</code>; a soma das colunas internas pode ser 12 ou menos.</p>
       ${componenteComCodigo('Grid aninhado',
-        `<div class="container border rounded p-3 bg-light text-center">
+    `<div class="container border rounded p-3 bg-light text-center">
           <div class="row">
             <div class="col-sm-3"><div class="bg-primary text-white p-3 rounded">Level 1: .col-sm-3</div></div>
             <div class="col-sm-9">
@@ -1479,7 +1479,7 @@ function paginaGrid() {
             </div>
           </div>
         </div>`,
-        `<div class="container text-center">
+    `<div class="container text-center">
   <div class="row">
     <div class="col-sm-3">Level 1: .col-sm-3</div>
     <div class="col-sm-9">
@@ -1490,9 +1490,9 @@ function paginaGrid() {
     </div>
   </div>
 </div>`,
-        `Row dentro de col-sm-9 com col-8/col-4 (col-sm-6)`,
-        ''
-      )}
+    `Row dentro de col-sm-9 com col-8/col-4 (col-sm-6)`,
+    ''
+  )}
     </section>
   `;
 }
@@ -1578,26 +1578,26 @@ function paginaContainers() {
       <p class="mb-4 text-muted small">O <code>.container</code> tem largura máxima por breakpoint. O <code>.container-fluid</code> ocupa 100% da largura em todos. Os responsivos (<code>.container-sm</code>, <code>.container-md</code>, etc.) ficam 100% até o breakpoint e depois ganham o mesmo max-width do container padrão.</p>
 
       ${componenteComCodigo('Container padrão',
-        `<div class="container border rounded p-3 bg-light text-center">
+    `<div class="container border rounded p-3 bg-light text-center">
           <p class="mb-0">Conteúdo dentro de <code>.container</code> — largura máxima muda em cada breakpoint.</p>
         </div>`,
-        `<div class="container">
+    `<div class="container">
   <!-- seu conteúdo -->
 </div>`,
-        `Container centraliza e limita a largura`,
-        ''
-      )}
+    `Container centraliza e limita a largura`,
+    ''
+  )}
 
       ${componenteComCodigo('Container fluido',
-        `<div class="container-fluid border rounded p-3 bg-light text-center">
+    `<div class="container-fluid border rounded p-3 bg-light text-center">
           <p class="mb-0">Conteúdo em <code>.container-fluid</code> — 100% da largura em qualquer tela.</p>
         </div>`,
-        `<div class="container-fluid">
+    `<div class="container-fluid">
   <!-- 100% da largura -->
 </div>`,
-        `Útil para layouts full-width`,
-        ''
-      )}
+    `Útil para layouts full-width`,
+    ''
+  )}
 
       <div class="card mb-4 shadow-sm">
         <div class="card-header bg-body-tertiary fw-bold">Largura máxima por breakpoint</div>
@@ -1622,24 +1622,24 @@ function paginaGutters() {
       <p class="mb-4 text-muted small">Use <code>.gx-*</code> para espaço horizontal entre colunas, <code>.gy-*</code> para vertical (quando as colunas quebram linha) e <code>.g-*</code> para os dois. Use <code>.g-0</code> para remover os gutters.</p>
 
       ${componenteComCodigo('Gutter horizontal maior (.gx-5)',
-        `<div class="container overflow-hidden text-center">
+    `<div class="container overflow-hidden text-center">
           <div class="row gx-5">
             <div class="col"><div class="p-3 bg-primary bg-opacity-25 rounded">Coluna 1</div></div>
             <div class="col"><div class="p-3 bg-primary bg-opacity-25 rounded">Coluna 2</div></div>
           </div>
         </div>`,
-        `<div class="container overflow-hidden">
+    `<div class="container overflow-hidden">
   <div class="row gx-5">
     <div class="col">...</div>
     <div class="col">...</div>
   </div>
 </div>`,
-        `Mais espaço entre colunas`,
-        ''
-      )}
+    `Mais espaço entre colunas`,
+    ''
+  )}
 
       ${componenteComCodigo('Gutter vertical (.gy-4)',
-        `<div class="container overflow-hidden text-center">
+    `<div class="container overflow-hidden text-center">
           <div class="row gy-4">
             <div class="col-6"><div class="p-3 bg-secondary bg-opacity-25 rounded">A</div></div>
             <div class="col-6"><div class="p-3 bg-secondary bg-opacity-25 rounded">B</div></div>
@@ -1647,16 +1647,16 @@ function paginaGutters() {
             <div class="col-6"><div class="p-3 bg-secondary bg-opacity-25 rounded">D</div></div>
           </div>
         </div>`,
-        `<div class="row gy-4">
+    `<div class="row gy-4">
   <div class="col-6">...</div>
   <div class="col-6">...</div>
 </div>`,
-        `Espaço entre linhas quando as colunas quebram`,
-        ''
-      )}
+    `Espaço entre linhas quando as colunas quebram`,
+    ''
+  )}
 
       ${componenteComCodigo('Gutter único menor (.g-2)',
-        `<div class="container text-center">
+    `<div class="container text-center">
           <div class="row g-2">
             <div class="col-6"><div class="p-3 bg-primary bg-opacity-25 rounded">1</div></div>
             <div class="col-6"><div class="p-3 bg-primary bg-opacity-25 rounded">2</div></div>
@@ -1664,28 +1664,28 @@ function paginaGutters() {
             <div class="col-6"><div class="p-3 bg-primary bg-opacity-25 rounded">4</div></div>
           </div>
         </div>`,
-        `<div class="row g-2">
+    `<div class="row g-2">
   <div class="col-6">...</div>
   <div class="col-6">...</div>
 </div>`,
-        `Espaço uniforme horizontal e vertical (escala 0–5)`,
-        ''
-      )}
+    `Espaço uniforme horizontal e vertical (escala 0–5)`,
+    ''
+  )}
 
       ${componenteComCodigo('Sem gutter (.g-0)',
-        `<div class="container text-center">
+    `<div class="container text-center">
           <div class="row g-0">
             <div class="col-6"><div class="p-2 border">col</div></div>
             <div class="col-6"><div class="p-2 border">col</div></div>
           </div>
         </div>`,
-        `<div class="row g-0">
+    `<div class="row g-0">
   <div class="col-6">...</div>
   <div class="col-6">...</div>
 </div>`,
-        `Colunas coladas, sem espaço entre elas`,
-        ''
-      )}
+    `Colunas coladas, sem espaço entre elas`,
+    ''
+  )}
     </section>
   `;
 }
@@ -1697,52 +1697,52 @@ function paginaBotoes() {
       <p class="lead text-muted mb-4">Use para ações principais (primário), secundárias (outline) e tamanhos diferentes. Mantenha um único botão primário por contexto para guiar o usuário.</p>
 
       ${componenteComCodigo('Botões Sólidos',
-        `<div class="d-flex gap-2 flex-wrap">
+    `<div class="d-flex gap-2 flex-wrap">
           <button class="btn btn-primary">Primário</button>
           <button class="btn btn-secondary">Secundário</button>
           <button class="btn btn-tertiary text-white">Terciário</button>
         </div>`,
-        `<button class="btn btn-primary">Primário</button>
+    `<button class="btn btn-primary">Primário</button>
 <button class="btn btn-secondary">Secundário</button>
 <button class="btn btn-tertiary">Terciário</button>`,
-        `<Button variant="primary">Primário</Button>
+    `<Button variant="primary">Primário</Button>
 <Button variant="secondary">Secundário</Button>
 <Button variant="tertiary">Terciário</Button>`,
-        'Primária (#E5293F) | Secundária (#ACBAC2) | Terciária (#7F919A)'
-      )}
+    'Primária (#E5293F) | Secundária (#ACBAC2) | Terciária (#7F919A)'
+  )}
 
       ${componenteComCodigo('Botões Outline',
-        `<div class="d-flex gap-2 flex-wrap">
+    `<div class="d-flex gap-2 flex-wrap">
           <button class="btn btn-outline-primary">Outline Primário</button>
           <button class="btn btn-outline-secondary">Outline Secundário</button>
           <button class="btn btn-outline-tertiary">Outline Terciário</button>
         </div>`,
-        `<button class="btn btn-outline-primary">Outline Primário</button>
+    `<button class="btn btn-outline-primary">Outline Primário</button>
 <button class="btn btn-outline-secondary">Outline Secundário</button>
 <button class="btn btn-outline-tertiary">Outline Terciário</button>`,
-        `<Button variant="outline-primary">Outline Primário</Button>
+    `<Button variant="outline-primary">Outline Primário</Button>
 <Button variant="outline-secondary">Outline Secundário</Button>
 <Button variant="outline-tertiary">Outline Terciário</Button>`,
-        ''
-      )}
+    ''
+  )}
 
       ${componenteComCodigo('Tamanhos',
-        `<div class="d-flex gap-2 align-items-center flex-wrap">
+    `<div class="d-flex gap-2 align-items-center flex-wrap">
           <button class="btn btn-primary btn-sm">Pequeno</button>
           <button class="btn btn-primary">Normal</button>
           <button class="btn btn-primary btn-lg">Grande</button>
         </div>`,
-        `<button class="btn btn-primary btn-sm">Pequeno</button>
+    `<button class="btn btn-primary btn-sm">Pequeno</button>
 <button class="btn btn-primary">Normal</button>
 <button class="btn btn-primary btn-lg">Grande</button>`,
-        `<Button size="sm">Pequeno</Button>
+    `<Button size="sm">Pequeno</Button>
 <Button>Normal</Button>
 <Button size="lg">Grande</Button>`,
-        'btn-sm | padrão | btn-lg'
-      )}
+    'btn-sm | padrão | btn-lg'
+  )}
 
       ${componenteComCodigo('Grupo de botões',
-        `<div class="btn-group" role="group">
+    `<div class="btn-group" role="group">
           <button type="button" class="btn btn-outline-primary">Esquerda</button>
           <button type="button" class="btn btn-outline-primary active">Centro</button>
           <button type="button" class="btn btn-outline-primary">Direita</button>
@@ -1752,26 +1752,26 @@ function paginaBotoes() {
           <button type="button" class="btn btn-primary">2</button>
           <button type="button" class="btn btn-primary">3</button>
         </div>`,
-        `<div class="btn-group" role="group">
+    `<div class="btn-group" role="group">
   <button class="btn btn-outline-primary">A</button>
   <button class="btn btn-outline-primary">B</button>
 </div>`,
-        `btn-group agrupa botões lado a lado`,
-        ''
-      )}
+    `btn-group agrupa botões lado a lado`,
+    ''
+  )}
 
       ${componenteComCodigo('Estados',
-        `<div class="d-flex gap-2 flex-wrap">
+    `<div class="d-flex gap-2 flex-wrap">
           <button class="btn btn-primary">Normal</button>
           <button class="btn btn-primary active">Ativo</button>
           <button class="btn btn-primary" disabled>Desabilitado</button>
         </div>`,
-        `<button class="btn btn-primary">Normal</button>
+    `<button class="btn btn-primary">Normal</button>
 <button class="btn btn-primary" disabled>Desabilitado</button>`,
-        `<Button>Normal</Button>
+    `<Button>Normal</Button>
 <Button disabled>Desabilitado</Button>`,
-        ''
-      )}
+    ''
+  )}
     </section>
   `;
 }
@@ -1783,30 +1783,30 @@ function paginaBadges() {
       <p class="lead text-muted mb-4">Labels curtos para status (Ativo, Pendente), contadores ao lado de ícones ou categorias. Use as cores do sistema para manter o significado consistente.</p>
 
       ${componenteComCodigo('Badges Sólidos',
-        `<div class="d-flex gap-2 flex-wrap">
+    `<div class="d-flex gap-2 flex-wrap">
           <span class="badge bg-primary">Primário</span>
           <span class="badge bg-secondary">Secundário</span>
           <span class="badge bg-tertiary">Terciário</span>
         </div>`,
-        `<span class="badge bg-primary">Primário</span>
+    `<span class="badge bg-primary">Primário</span>
 <span class="badge bg-secondary">Secundário</span>
 <span class="badge bg-tertiary">Terciário</span>`,
-        `<Badge variant="primary">Primário</Badge>
+    `<Badge variant="primary">Primário</Badge>
 <Badge variant="secondary">Secundário</Badge>
 <Badge variant="tertiary">Terciário</Badge>`,
-        ''
-      )}
+    ''
+  )}
 
       ${componenteComCodigo('Badge Pill',
-        `<div class="d-flex gap-2 flex-wrap">
+    `<div class="d-flex gap-2 flex-wrap">
           <span class="badge rounded-pill bg-primary">Pill Primário</span>
           <span class="badge rounded-pill bg-secondary">Pill Secundário</span>
           <span class="badge rounded-pill bg-tertiary">Pill Terciário</span>
         </div>`,
-        `<span class="badge rounded-pill bg-primary">Pill Primário</span>`,
-        `<Badge pill variant="primary">Pill Primário</Badge>`,
-        ''
-      )}
+    `<span class="badge rounded-pill bg-primary">Pill Primário</span>`,
+    `<Badge pill variant="primary">Pill Primário</Badge>`,
+    ''
+  )}
     </section>
   `;
 }
@@ -1818,33 +1818,33 @@ function paginaAlertas() {
       <p class="lead text-muted mb-4">Caixas de destaque para avisos, sucesso, erro ou informação. Podem ter botão de fechar (dismiss) e ícone. Evite abusar — uma mensagem clara por contexto.</p>
 
       ${componenteComCodigo('Alertas do Design System',
-        `<div class="alert alert-primary" role="alert">Alerta primário — usando a cor principal do EasyJur.</div>
+    `<div class="alert alert-primary" role="alert">Alerta primário — usando a cor principal do EasyJur.</div>
          <div class="alert alert-secondary" role="alert">Alerta secundário — informação neutra.</div>
          <div class="alert alert-tertiary" role="alert">Alerta terciário — destaque sutil.</div>`,
-        `<div class="alert alert-primary" role="alert">Alerta primário</div>
+    `<div class="alert alert-primary" role="alert">Alerta primário</div>
 <div class="alert alert-secondary" role="alert">Alerta secundário</div>
 <div class="alert alert-tertiary" role="alert">Alerta terciário</div>`,
-        `import { Alert } from '@legalops/ui';
+    `import { Alert } from '@legalops/ui';
 
 <Alert variant="primary">Alerta primário</Alert>`,
-        ''
-      )}
+    ''
+  )}
 
       ${componenteComCodigo('Alerta com Ícone e Dismiss',
-        `<div class="alert alert-primary alert-dismissible fade show d-flex align-items-center" role="alert">
+    `<div class="alert alert-primary alert-dismissible fade show d-flex align-items-center" role="alert">
           <i class="bi bi-info-circle-fill me-2"></i>
           <div>
             Alerta com ícone e botão de fechar.
           </div>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>`,
-        `<div class="alert alert-primary alert-dismissible fade show" role="alert">
+    `<div class="alert alert-primary alert-dismissible fade show" role="alert">
   Alerta que pode ser fechado.
   <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>`,
-        `<Alert variant="primary" dismissible>Alerta...</Alert>`,
-        ''
-      )}
+    `<Alert variant="primary" dismissible>Alerta...</Alert>`,
+    ''
+  )}
     </section>
   `;
 }
@@ -1856,7 +1856,7 @@ function paginaCards() {
       <p class="lead text-muted mb-4">Blocos com título, texto, imagens e botões. Ideais para listagens, resumos e agrupamento de informação. Use card-header e card-footer quando precisar de cabeçalho ou rodapé fixos.</p>
 
       ${componenteComCodigo('Card Básico',
-        `<div class="card" style="width: 18rem;">
+    `<div class="card" style="width: 18rem;">
           <div class="card-body">
             <h5 class="card-title">Título do Card</h5>
             <h6 class="card-subtitle mb-2 text-body-secondary">Subtítulo</h6>
@@ -1865,24 +1865,24 @@ function paginaCards() {
             <a href="#" class="card-link">Link 2</a>
           </div>
         </div>`,
-        `<div class="card">
+    `<div class="card">
   <div class="card-body">
     <h5 class="card-title">Título</h5>
     <p class="card-text">Conteúdo.</p>
     <a href="#" class="btn btn-primary">Ação</a>
   </div>
 </div>`,
-        `<Card>
+    `<Card>
   <Card.Body>
     <Card.Title>Título</Card.Title>
     <Card.Text>Conteúdo.</Card.Text>
   </Card.Body>
 </Card>`,
-        ''
-      )}
+    ''
+  )}
 
       ${componenteComCodigo('Card com Header e Footer',
-        `<div class="card text-center" style="width: 18rem;">
+    `<div class="card text-center" style="width: 18rem;">
           <div class="card-header">Destaque</div>
           <div class="card-body">
             <h5 class="card-title">Tratamento Especial</h5>
@@ -1891,17 +1891,17 @@ function paginaCards() {
           </div>
           <div class="card-footer text-body-secondary">2 dias atrás</div>
         </div>`,
-        `<div class="card">
+    `<div class="card">
   <div class="card-header">Header</div>
   <div class="card-body">...</div>
   <div class="card-footer">Footer</div>
 </div>`,
-        `<Card>
+    `<Card>
   <Card.Header>Header</Card.Header>
   <Card.Body>...</Card.Body>
 </Card>`,
-        ''
-      )}
+    ''
+  )}
     </section>
   `;
 }
@@ -1913,7 +1913,7 @@ function paginaAccordion() {
       <p class="lead text-muted mb-5">Painéis expansíveis para organizar conteúdo.</p>
 
       ${componenteComCodigo('Accordion Básico',
-        `<div class="accordion" id="accordionExample">
+    `<div class="accordion" id="accordionExample">
           <div class="accordion-item">
             <h2 class="accordion-header">
               <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
@@ -1935,7 +1935,7 @@ function paginaAccordion() {
             </div>
           </div>
         </div>`,
-        `<div class="accordion" id="accordionExample">
+    `<div class="accordion" id="accordionExample">
   <div class="accordion-item">
     <h2 class="accordion-header">
       <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#c1">
@@ -1947,13 +1947,13 @@ function paginaAccordion() {
     </div>
   </div>
 </div>`,
-        `import { Accordion } from '@legalops/ui';
+    `import { Accordion } from '@legalops/ui';
 
 <Accordion>
   <Accordion.Item title="Item 1">Conteúdo...</Accordion.Item>
 </Accordion>`,
-        ''
-      )}
+    ''
+  )}
     </section>
   `;
 }
@@ -1965,7 +1965,7 @@ function paginaModais() {
       <p class="lead text-muted mb-5">Diálogos modais para interações focadas.</p>
 
       ${componenteComCodigo('Modal Básico',
-        `<div>
+    `<div>
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
             Abrir Modal
           </button>
@@ -1988,7 +1988,7 @@ function paginaModais() {
             </div>
           </div>
         </div>`,
-        `<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal1">Abrir</button>
+    `<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal1">Abrir</button>
 
 <div class="modal fade" id="modal1" tabindex="-1">
   <div class="modal-dialog">
@@ -2004,14 +2004,14 @@ function paginaModais() {
     </div>
   </div>
 </div>`,
-        `import { Modal } from '@legalops/ui';
+    `import { Modal } from '@legalops/ui';
 
 <Modal isOpen={isOpen} onClose={close}>
   <Modal.Header>Título</Modal.Header>
   <Modal.Body>Conteúdo...</Modal.Body>
 </Modal>`,
-        'Clique no botão para abrir o modal.'
-      )}
+    'Clique no botão para abrir o modal.'
+  )}
     </section>
   `;
 }
@@ -2023,7 +2023,7 @@ function paginaTooltips() {
       <p class="lead text-muted mb-5">Dicas contextuais flutuantes.</p>
 
       ${componenteComCodigo('Tooltips',
-        `<div class="d-flex gap-2 flex-wrap py-3">
+    `<div class="d-flex gap-2 flex-wrap py-3">
           <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tooltip no topo">
             Tooltip Topo
           </button>
@@ -2037,10 +2037,10 @@ function paginaTooltips() {
             Tooltip Esquerda
           </button>
         </div>`,
-        `<button data-bs-toggle="tooltip" data-bs-title="Texto">Hover</button>`,
-        `<Tooltip content="Texto"><Button>Hover</Button></Tooltip>`,
-        'Requer inicialização via JS (new bootstrap.Tooltip)'
-      )}
+    `<button data-bs-toggle="tooltip" data-bs-title="Texto">Hover</button>`,
+    `<Tooltip content="Texto"><Button>Hover</Button></Tooltip>`,
+    'Requer inicialização via JS (new bootstrap.Tooltip)'
+  )}
     </section>
   `;
 }
@@ -2052,7 +2052,7 @@ function paginaProgress() {
       <p class="lead text-muted mb-5">Barras de progresso customizadas.</p>
 
       ${componenteComCodigo('Barras de Progresso',
-        `<div class="d-flex flex-column gap-3">
+    `<div class="d-flex flex-column gap-3">
           <div class="progress" role="progressbar">
             <div class="progress-bar bg-primary" style="width: 25%">25%</div>
           </div>
@@ -2063,12 +2063,12 @@ function paginaProgress() {
             <div class="progress-bar bg-tertiary" style="width: 75%">75%</div>
           </div>
         </div>`,
-        `<div class="progress">
+    `<div class="progress">
   <div class="progress-bar bg-primary" style="width: 25%"></div>
 </div>`,
-        `<Progress value={25} variant="primary" />`,
-        ''
-      )}
+    `<Progress value={25} variant="primary" />`,
+    ''
+  )}
     </section>
   `;
 }
@@ -2080,17 +2080,17 @@ function paginaSpinners() {
       <p class="lead text-muted mb-5">Indicadores de carregamento.</p>
 
       ${componenteComCodigo('Spinners Coloridos',
-        `<div class="d-flex gap-3">
+    `<div class="d-flex gap-3">
           <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
           <div class="spinner-border text-secondary" role="status"><span class="visually-hidden">Loading...</span></div>
           <div class="spinner-border text-tertiary" role="status"><span class="visually-hidden">Loading...</span></div>
         </div>`,
-        `<div class="spinner-border text-primary"></div>
+    `<div class="spinner-border text-primary"></div>
 <div class="spinner-border text-secondary"></div>
 <div class="spinner-border text-tertiary"></div>`,
-        `<Spinner variant="primary" />`,
-        ''
-      )}
+    `<Spinner variant="primary" />`,
+    ''
+  )}
     </section>
   `;
 }
@@ -2102,7 +2102,7 @@ function paginaToasts() {
       <p class="lead text-muted mb-5">Notificações estilo push.</p>
 
       ${componenteComCodigo('Toast Estático',
-        `<div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+    `<div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
           <div class="toast-header">
             <div class="rounded me-2 bg-primary" style="width: 20px; height: 20px;"></div>
             <strong class="me-auto">EasyJur</strong>
@@ -2113,17 +2113,17 @@ function paginaToasts() {
             Olá! Esta é uma notificação toast.
           </div>
         </div>`,
-        `<div class="toast show">
+    `<div class="toast show">
   <div class="toast-header">
     <strong class="me-auto">Título</strong>
     <button class="btn-close"></button>
   </div>
   <div class="toast-body">Mensagem...</div>
 </div>`,
-        `const { showToast } = useToast();
+    `const { showToast } = useToast();
 showToast({ title: 'Título', message: '...' })`,
-        ''
-      )}
+    ''
+  )}
     </section>
   `;
 }
@@ -2135,7 +2135,7 @@ function paginaInputs() {
       <p class="lead text-muted mb-4">Campos de texto, e-mail, senha e textarea com <code>.form-control</code>. Sempre use <code>.form-label</code> nas labels e associe com <code>for</code> e <code>id</code> para acessibilidade.</p>
 
       ${componenteComCodigo('Campos de Texto',
-        `<div class="row g-3">
+    `<div class="row g-3">
           <div class="col-12">
             <label class="form-label">Email address</label>
             <input type="email" class="form-control" placeholder="name@example.com">
@@ -2145,17 +2145,17 @@ function paginaInputs() {
             <textarea class="form-control" rows="3"></textarea>
           </div>
         </div>`,
-        `<label class="form-label">Email</label>
+    `<label class="form-label">Email</label>
 <input type="email" class="form-control" placeholder="name@example.com">`,
-        `<Input label="Email" placeholder="..." />`,
-        ''
-      )}
+    `<Input label="Email" placeholder="..." />`,
+    ''
+  )}
     </section>
   `;
 }
 
 function paginaDatas() {
-  const years = Array.from({length: 21}, (_, i) => 2016 + i);
+  const years = Array.from({ length: 21 }, (_, i) => 2016 + i);
   const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
   return `
@@ -2164,31 +2164,31 @@ function paginaDatas() {
       <p class="lead text-muted mb-4">Modelos de campos de data: input nativo, com ícone, intervalo e restrições.</p>
 
       ${componenteComCodigo('Input Date — Nativo',
-        `<div>
+    `<div>
           <label class="form-label">Data</label>
           <input type="date" class="form-control" id="date1">
         </div>`,
-        `<label class="form-label">Data</label>
+    `<label class="form-label">Data</label>
 <input type="date" class="form-control">`,
-        `<InputDate label="Data" />`,
-        ''
-      )}
+    `<InputDate label="Data" />`,
+    ''
+  )}
 
       ${componenteComCodigo('Input Date com ícone',
-        `<div class="input-group">
+    `<div class="input-group">
           <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
           <input type="date" class="form-control" id="date2">
         </div>`,
-        `<div class="input-group">
+    `<div class="input-group">
   <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
   <input type="date" class="form-control">
 </div>`,
-        `<InputDate icon="calendar" />`,
-        'Use .input-group para adicionar ícones ou botões ao campo.'
-      )}
+    `<InputDate icon="calendar" />`,
+    'Use .input-group para adicionar ícones ou botões ao campo.'
+  )}
 
       ${componenteComCodigo('Intervalo de datas',
-        `<div class="row g-3 align-items-end">
+    `<div class="row g-3 align-items-end">
           <div class="col-md-6">
             <label class="form-label">De</label>
             <input type="date" class="form-control" id="dateFrom">
@@ -2198,16 +2198,16 @@ function paginaDatas() {
             <input type="date" class="form-control" id="dateTo">
           </div>
         </div>`,
-        `<div class="d-flex gap-2">
+    `<div class="d-flex gap-2">
   <input type="date" class="form-control">
   <input type="date" class="form-control">
 </div>`,
-        `<DateRange />`,
-        'Para validação mais avançada, ligue o componente ao datepicker do seu framework.'
-      )}
+    `<DateRange />`,
+    'Para validação mais avançada, ligue o componente ao datepicker do seu framework.'
+  )}
 
       ${componenteComCodigo('Restrições e desabilitado',
-        `<div class="row g-3">
+    `<div class="row g-3">
           <div class="col-12">
             <label class="form-label">Data mínima / máxima</label>
             <input type="date" class="form-control" min="2020-01-01" max="2030-12-31" id="dateMinMax">
@@ -2217,16 +2217,16 @@ function paginaDatas() {
             <input type="date" class="form-control" disabled id="dateDisabled">
           </div>
         </div>`,
-        `<input type="date" min="2020-01-01" max="2030-12-31">`,
-        `<InputDate min="2020-01-01" max="2030-12-31" />`,
-        ''
-      )}
+    `<input type="date" min="2020-01-01" max="2030-12-31">`,
+    `<InputDate min="2020-01-01" max="2030-12-31" />`,
+    ''
+  )}
 
       <h3 class="h4 fw-bold mt-5 mb-3">Modelos Avançados</h3>
       <p class="text-muted">Componentes compostos para fluxos de reserva e seleção de intervalos complexos.</p>
 
       ${componenteComCodigo('Range Picker — Calendário Duplo',
-        `<div class="rebranding">
+    `<div class="rebranding">
           <div class="row g-3 mb-3" style="max-width: 600px;">
             <div class="col-md-6">
               <div class="py-2 px-3 border rounded bg-white h-100 d-flex align-items-center">
@@ -2285,7 +2285,7 @@ function paginaDatas() {
                     <div class="dropdown">
                       <button id="month-2-name" class="btn btn-sm btn-link text-dark fw-bold dropdown-toggle text-decoration-none border-0 p-0" type="button" data-bs-toggle="dropdown">Março</button>
                       <ul class="dropdown-menu shadow" style="font-size: 0.8rem;">
-                        ${months.map((m, i) => `<li><a class="dropdown-item ${i === 2 ? 'active' : ''}" href="#" onclick="window.dsSetMonth(${(i-1+12)%12}); return false">${m}</a></li>`).join('')}
+                        ${months.map((m, i) => `<li><a class="dropdown-item ${i === 2 ? 'active' : ''}" href="#" onclick="window.dsSetMonth(${(i - 1 + 12) % 12}); return false">${m}</a></li>`).join('')}
                       </ul>
                     </div>
                     <div class="dropdown">
@@ -2313,7 +2313,7 @@ function paginaDatas() {
             </div>
           </div>
         </div>`,
-        `<div class="row g-3">
+    `<div class="row g-3">
   <div class="col-md-6">
     <div class="py-2 px-3 border rounded bg-white d-flex align-items-center">
       <i class="bi bi-calendar3 me-2" style="color: #5c6b7f;"></i>
@@ -2327,9 +2327,9 @@ function paginaDatas() {
     </div>
   </div>
 </div>`,
-        `<DateRangePicker separated doubleCalendar />`,
-        'Este modelo simula um seletor de passagens ou reservas com calendário duplo flutuante.'
-      )}
+    `<DateRangePicker separated doubleCalendar />`,
+    'Este modelo simula um seletor de passagens ou reservas com calendário duplo flutuante.'
+  )}
     </section>
   `;
 }
@@ -2338,21 +2338,212 @@ function paginaSelects() {
   return `
     <section class="mb-5">
       <h2 class="display-6 fw-bold text-primary mb-3">Selects</h2>
-      <p class="lead text-muted mb-4">Lista de opções com <code>.form-select</code>. Use para escolha única (país, estado, categoria). Para muitas opções ou busca, considere um componente de autocomplete.</p>
+      <p class="lead text-muted mb-4">Lista de opções com <code>.form-select</code>. Use para escolha única (país, estado, categoria). O estilo é consistente com os inputs de texto, garantindo harmonia visual nos formulários.</p>
 
-      ${componenteComCodigo('Form Select',
-        `<select class="form-select" aria-label="Default select example">
-          <option selected>Abra o menu de seleção</option>
-          <option value="1">Opção Um</option>
-          <option value="2">Opção Dois</option>
-          <option value="3">Opção Três</option>
-        </select>`,
-        `<select class="form-select">
-  <option>Opção 1</option>
+      ${componenteComCodigo('Select Padrão',
+    `<div>
+            <label class="form-label">Exemplo Básico</label>
+            <select class="form-select" aria-label="Exemplo de select padrão">
+                <option selected>Abra o menu de seleção</option>
+                <option value="1">Opção Um</option>
+                <option value="2">Opção Dois</option>
+                <option value="3">Opção Três</option>
+            </select>
+        </div>`,
+    `<label class="form-label">Label</label>
+<select class="form-select">
+  <option selected>Selecione...</option>
+  <option value="1">Opção 1</option>
 </select>`,
-        `<Select options={[{label: 'Opção 1', value: 1}]} />`,
-        ''
-      )}
+    `<Select label="Label">
+  <option>Selecione...</option>
+</Select>`,
+    'Sempre combine com .form-label para melhor acessibilidade.'
+  )}
+
+      ${componenteComCodigo('Tamanhos',
+    `<div class="d-flex flex-column gap-3">
+            <div>
+                <label class="form-label small text-muted">Pequeno (.form-select-sm)</label>
+                <select class="form-select form-select-sm" aria-label="Select pequeno">
+                    <option selected>Selecione uma opção</option>
+                    <option value="1">Um</option>
+                    <option value="2">Dois</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label small text-muted">Padrão</label>
+                <select class="form-select" aria-label="Select padrão">
+                    <option selected>Selecione uma opção</option>
+                    <option value="1">Um</option>
+                    <option value="2">Dois</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label small text-muted">Grande (.form-select-lg)</label>
+                <select class="form-select form-select-lg" aria-label="Select grande">
+                    <option selected>Selecione uma opção</option>
+                    <option value="1">Um</option>
+                    <option value="2">Dois</option>
+                </select>
+            </div>
+        </div>`,
+    `<select class="form-select form-select-sm">...</select>
+<select class="form-select">...</select>
+<select class="form-select form-select-lg">...</select>`,
+    `<Select size="sm" />
+<Select />
+<Select size="lg" />`,
+    'Use classes de tamanho para alinhar com outros inputs do mesmo porte.'
+  )}
+
+      ${componenteComCodigo('Estados (Disabled)',
+    `<div class="d-flex flex-column gap-3">
+            <div>
+                <label class="form-label">Select Desabilitado</label>
+                <select class="form-select" aria-label="Select desabilitado" disabled>
+                    <option selected>Não é possível selecionar</option>
+                    <option value="1">Um</option>
+                </select>
+            </div>
+            <div>
+               <label class="form-label">Opção Desabilitada</label>
+               <select class="form-select" aria-label="Opção desabilitada">
+                  <option selected>Selecione uma opção válida</option>
+                  <option value="1" disabled>Opção indisponível (Disabled)</option>
+                  <option value="2">Opção válida</option>
+               </select>
+               <div class="form-text">A opção 1 não pode ser clicada.</div>
+            </div>
+        </div>`,
+    `<select class="form-select" disabled>...</select>
+        
+<select class="form-select">
+  <option disabled>Opção inválida</option>
+</select>`,
+    `<Select disabled />
+        
+<Select>
+  <option disabled>...</option>
+</Select>`,
+    'Adicione o atributo disabled ao select inteiro ou a opções específicas.'
+  )}
+      
+      ${componenteComCodigo('Múltipla Escolha',
+    `<div>
+            <label class="form-label">Lista de Seleção Múltipla</label>
+            <select class="form-select" multiple aria-label="Select múltiplo" size="3">
+                <option value="1">Opção Um</option>
+                <option value="2">Opção Dois</option>
+                <option value="3">Opção Três</option>
+                <option value="4">Opção Quatro</option>
+                <option value="5">Opção Cinco</option>
+            </select>
+            <div class="form-text">Segure Ctrl (ou Command) para selecionar vários itens.</div>
+        </div>`,
+    `<select class="form-select" multiple size="3">
+  <option>1</option>
+  <option>2</option>
+</select>`,
+    `<Select multiple />`,
+    'Adicione o atributo multiple. O atributo size define quantas linhas aparecem visíveis.'
+  )}
+    
+      <h3 class="h4 fw-bold mt-5 mb-3">Multiselect Dropdown</h3>
+      <p class="text-muted">Componente avançado para seleção múltipla com estilo de dropdown e tags.</p>
+
+      ${componenteComCodigo('Multiselect com Filtros',
+    `<div class="dropdown dropdown-multiselect" id="demo-multiselect">
+            <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+              <div class="d-flex align-items-center gap-2 overflow-hidden flex-grow-1">
+                 <div class="selected-badges d-flex align-items-center gap-1 overflow-hidden" id="demo-badges">
+                   <!-- Badges serão inseridos aqui via JS -->
+                   <span class="text-muted small fw-normal">Selecione</span>
+                 </div>
+              </div>
+              <div class="d-flex align-items-center gap-2 ms-2">
+                <span id="demo-counter" class="badge badge-custom rounded-pill" style="display: none;"></span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down text-muted"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+           </button>
+           <ul class="dropdown-menu p-1 shadow w-100">
+              <li>
+                <div class="dropdown-item" onclick="window.dsMultiselectToggle(this, event)" data-value="João Silva" title="João Silva">
+                  <span class="check-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span class="item-text">João Silva</span>
+                </div>
+             </li>
+             <li>
+                <div class="dropdown-item" onclick="window.dsMultiselectToggle(this, event)" data-value="TI" title="TI">
+                  <span class="check-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span class="item-text">TI</span>
+                </div>
+             </li>
+             <li>
+                <div class="dropdown-item" onclick="window.dsMultiselectToggle(this, event)" data-value="Marketing e Vendas" title="Marketing e Vendas">
+                   <span class="check-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><polyline points="20 6 9 17 4 12"/></svg></span>
+                   <span class="item-text">Marketing e Vendas</span>
+                </div>
+             </li>
+             <li>
+                <div class="dropdown-item" onclick="window.dsMultiselectToggle(this, event)" data-value="Relatório Trimestral de Atividades" title="Relatório Trimestral de Atividades">
+                   <span class="check-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><polyline points="20 6 9 17 4 12"/></svg></span>
+                   <span class="item-text">Relatório Trimestral de Atividades</span>
+                </div>
+             </li>
+             <li>
+                <div class="dropdown-item" onclick="window.dsMultiselectToggle(this, event)" data-value="Financeiro" title="Financeiro">
+                   <span class="check-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><polyline points="20 6 9 17 4 12"/></svg></span>
+                   <span class="item-text">Financeiro</span>
+                </div>
+             </li>
+             <li>
+                <div class="dropdown-item" onclick="window.dsMultiselectToggle(this, event)" data-value="Produção" title="Produção">
+                   <span class="check-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><polyline points="20 6 9 17 4 12"/></svg></span>
+                   <span class="item-text">Produção</span>
+                </div>
+             </li>
+             <li style="display: none;"><hr class="dropdown-divider"></li>
+             <li>
+                <div class="action-clear text-center cursor-pointer" style="display: none;" onclick="window.dsMultiselectClear('demo-multiselect')">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x me-1"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg> Limpar filtros
+                </div>
+             </li>
+           </ul>
+        </div>
+        <script>
+          // Pequeno script para o comportamento do dropdown não fechar ao clicar
+          const dd = document.getElementById('demo-multiselect');
+          if(dd) {
+             dd.addEventListener('click', function(e) {
+               // Impede fechamento se clicar no menu
+               if (e.target.closest('.dropdown-menu')) {
+                 e.stopPropagation();
+               }
+             });
+          }
+        </script>`,
+    `<div class="dropdown dropdown-multiselect">
+  <button class="btn dropdown-toggle">
+    <div class="selected-badges">
+        <span class="badge bg-primary">Item selecionado</span>
+    </div>
+  </button>
+  <ul class="dropdown-menu">
+    <li>
+       <div class="dropdown-item selected">
+         <span class="check-icon"><i class="bi bi-check-lg"></i></span>
+         Item 1
+       </div>
+    </li>
+  </ul>
+</div>`,
+    `<MultiSelect 
+  options={['Cadastrando', 'Monitorando', ...]} 
+  selected={['Cadastrando', 'Monitorando']} 
+/>`,
+    'Use classes como .dropdown-multiselect para aplicar o estilo customizado.'
+  )}
     </section>
   `;
 }
@@ -2364,7 +2555,7 @@ function paginaCheckboxes() {
       <p class="lead text-muted mb-5">O componente Checkbox é utilizado para permitir que o usuário selecione uma ou mais opções de uma lista, ou para alternar entre dois estados (ligado/desligado).</p>
 
       ${componenteComCodigo('Estado Padrão',
-        `<div>
+    `<div>
           <div class="form-check mb-2">
             <input class="form-check-input" type="checkbox" value="" id="checkDefault">
             <label class="form-check-label" for="checkDefault">Checkbox desmarcado</label>
@@ -2374,16 +2565,16 @@ function paginaCheckboxes() {
             <label class="form-check-label" for="checkChecked">Checkbox marcado</label>
           </div>
         </div>`,
-        `<div class="form-check">
+    `<div class="form-check">
   <input class="form-check-input" type="checkbox" id="c1">
   <label class="form-check-label" for="c1">Label</label>
 </div>`,
-        `<Checkbox label="Label" />`,
-        'Use a classe .form-check para envolver o input e a label.'
-      )}
+    `<Checkbox label="Label" />`,
+    'Use a classe .form-check para envolver o input e a label.'
+  )}
 
       ${componenteComCodigo('Desabilitado',
-        `<div>
+    `<div>
           <div class="form-check mb-2">
             <input class="form-check-input" type="checkbox" value="" id="checkDisabled" disabled>
             <label class="form-check-label" for="checkDisabled">Checkbox desabilitado</label>
@@ -2393,13 +2584,13 @@ function paginaCheckboxes() {
             <label class="form-check-label" for="checkCheckedDisabled">Checkbox marcado e desabilitado</label>
           </div>
         </div>`,
-        `<input class="form-check-input" type="checkbox" disabled>`,
-        `<Checkbox label="Label" disabled />`,
-        'Adicione o atributo disabled para desativar a interação.'
-      )}
+    `<input class="form-check-input" type="checkbox" disabled>`,
+    `<Checkbox label="Label" disabled />`,
+    'Adicione o atributo disabled para desativar a interação.'
+  )}
 
       ${componenteComCodigo('Indeterminado',
-        `<div>
+    `<div>
           <div class="form-check mb-2">
             <input class="form-check-input" type="checkbox" value="" id="checkIndeterminate">
             <label class="form-check-label" for="checkIndeterminate">Checkbox indeterminado</label>
@@ -2408,14 +2599,14 @@ function paginaCheckboxes() {
             document.getElementById('checkIndeterminate').indeterminate = true;
           </script>
         </div>`,
-        `<input class="form-check-input" type="checkbox" id="ind1">
+    `<input class="form-check-input" type="checkbox" id="ind1">
 <script>document.getElementById('ind1').indeterminate = true;</script>`,
-        `<Checkbox label="Label" indeterminate />`,
-        'O estado indeterminado deve ser definido via JavaScript.'
-      )}
+    `<Checkbox label="Label" indeterminate />`,
+    'O estado indeterminado deve ser definido via JavaScript.'
+  )}
 
       ${componenteComCodigo('Alinhamento Horizontal (Inline)',
-        `<div class="d-flex gap-3">
+    `<div class="d-flex gap-3">
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
             <label class="form-check-label" for="inlineCheckbox1">Opção 1</label>
@@ -2429,16 +2620,16 @@ function paginaCheckboxes() {
             <label class="form-check-label" for="inlineCheckbox3">Opção 3 (desabilitada)</label>
           </div>
         </div>`,
-        `<div class="form-check form-check-inline">
+    `<div class="form-check form-check-inline">
   <input class="form-check-input" type="checkbox" id="c1">
   <label class="form-check-label">Opção</label>
 </div>`,
-        `<Checkbox label="Label" inline />`,
-        'Agrupe checkboxes na mesma linha usando .form-check-inline.'
-      )}
+    `<Checkbox label="Label" inline />`,
+    'Agrupe checkboxes na mesma linha usando .form-check-inline.'
+  )}
 
       ${componenteComCodigo('Botões de Alternância (Toggle)',
-        `<div class="d-flex gap-2">
+    `<div class="d-flex gap-2">
           <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
           <label class="btn btn-outline-primary" for="btncheck1">Checkbox 1</label>
 
@@ -2448,14 +2639,14 @@ function paginaCheckboxes() {
           <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
           <label class="btn btn-outline-secondary" for="btncheck3">Checkbox 3</label>
         </div>`,
-        `<input type="checkbox" class="btn-check" id="btn1">
+    `<input type="checkbox" class="btn-check" id="btn1">
 <label class="btn btn-outline-primary" for="btn1">Botão</label>`,
-        `<Checkbox variant="button" label="Botão" />`,
-        'Use a classe .btn-check no input e as classes de botão (.btn .btn-*) na label.'
-      )}
+    `<Checkbox variant="button" label="Botão" />`,
+    'Use a classe .btn-check no input e as classes de botão (.btn .btn-*) na label.'
+  )}
 
       ${componenteComCodigo('Lista de Seleção (Grouped)',
-        `<div class="list-group shadow-sm border-0">
+    `<div class="list-group shadow-sm border-0">
           <label class="list-group-item d-flex gap-3 align-items-center">
             <input class="form-check-input flex-shrink-0" type="checkbox" value="" checked>
             <span>
@@ -2478,15 +2669,15 @@ function paginaCheckboxes() {
             </span>
           </label>
         </div>`,
-        `<div class="list-group">
+    `<div class="list-group">
   <label class="list-group-item d-flex gap-2">
     <input class="form-check-input" type="checkbox">
     Texto
   </label>
 </div>`,
-        `<CheckboxGroup items={...} />`,
-        'Combine list-group com checkboxes para seleções de lista mais ricas.'
-      )}
+    `<CheckboxGroup items={...} />`,
+    'Combine list-group com checkboxes para seleções de lista mais ricas.'
+  )}
     </section>
   `;
 }
@@ -2498,7 +2689,7 @@ function paginaSwitches() {
       <p class="lead text-muted mb-5">Interruptores toggle.</p>
 
       ${componenteComCodigo('Switch',
-        `<div class="form-check form-switch">
+    `<div class="form-check form-switch">
           <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
           <label class="form-check-label" for="flexSwitchCheckDefault">Switch padrão</label>
         </div>
@@ -2506,13 +2697,13 @@ function paginaSwitches() {
           <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
           <label class="form-check-label" for="flexSwitchCheckChecked">Switch ativado</label>
         </div>`,
-        `<div class="form-check form-switch">
+    `<div class="form-check form-switch">
   <input class="form-check-input" type="checkbox" role="switch">
   <label class="form-check-label">Switch</label>
 </div>`,
-        `<Switch label="Switch" />`,
-        ''
-      )}
+    `<Switch label="Switch" />`,
+    ''
+  )}
     </section>
   `;
 }
@@ -2524,7 +2715,7 @@ function paginaInputGroup() {
       <p class="lead text-muted mb-5">Agrupamento de inputs e botões.</p>
 
       ${componenteComCodigo('Input Group',
-        `<div class="input-group mb-3">
+    `<div class="input-group mb-3">
           <span class="input-group-text">@</span>
           <input type="text" class="form-control" placeholder="Username">
         </div>
@@ -2533,15 +2724,15 @@ function paginaInputGroup() {
           <input type="text" class="form-control">
           <span class="input-group-text">,00</span>
         </div>`,
-        `<div class="input-group">
+    `<div class="input-group">
   <span class="input-group-text">@</span>
   <input type="text" class="form-control">
 </div>`,
-        `<InputGroup prefix="@">
+    `<InputGroup prefix="@">
   <Input />
 </InputGroup>`,
-        ''
-      )}
+    ''
+  )}
     </section>
   `;
 }
@@ -2554,7 +2745,7 @@ function paginaFormLayout() {
       <p class="mb-4 text-muted small">Em telas pequenas os campos ficam empilhados; a partir do breakpoint (ex.: <code>md</code>) eles passam a ocupar a largura definida. Labels alinhados à esquerda dos campos usam <code>.col-form-label</code> na label.</p>
 
       ${componenteComCodigo('Formulário em grid (row g-3)',
-        `<form class="row g-3">
+    `<form class="row g-3">
           <div class="col-md-6">
             <label class="form-label">Nome</label>
             <input type="text" class="form-control" placeholder="Nome">
@@ -2589,7 +2780,7 @@ function paginaFormLayout() {
             <button type="submit" class="btn btn-primary">Enviar</button>
           </div>
         </form>`,
-        `<form class="row g-3">
+    `<form class="row g-3">
   <div class="col-md-6">
     <label class="form-label">Nome</label>
     <input type="text" class="form-control">
@@ -2602,12 +2793,12 @@ function paginaFormLayout() {
     <button type="submit" class="btn btn-primary">Enviar</button>
   </div>
 </form>`,
-        `Grid + form-label + form-control + form-select`,
-        ''
-      )}
+    `Grid + form-label + form-control + form-select`,
+    ''
+  )}
 
       ${componenteComCodigo('Formulário horizontal (label ao lado do campo)',
-        `<form>
+    `<form>
           <div class="row mb-3">
             <label class="col-sm-2 col-form-label">Email</label>
             <div class="col-sm-10">
@@ -2626,7 +2817,7 @@ function paginaFormLayout() {
             </div>
           </div>
         </form>`,
-        `<form>
+    `<form>
   <div class="row mb-3">
     <label class="col-sm-2 col-form-label">Email</label>
     <div class="col-sm-10">
@@ -2639,9 +2830,9 @@ function paginaFormLayout() {
     </div>
   </div>
 </form>`,
-        `Labels e campos na mesma linha em telas sm ou maior`,
-        ''
-      )}
+    `Labels e campos na mesma linha em telas sm ou maior`,
+    ''
+  )}
     </section>
   `;
 }
@@ -2654,7 +2845,7 @@ function paginaValidacao() {
       <p class="mb-4 text-muted small">Aqui os exemplos estão com estado fixo para você ver o resultado. No uso real, essas classes são aplicadas após o usuário enviar o formulário ou ao sair do campo, via JavaScript ou validação no servidor.</p>
 
       ${componenteComCodigo('Campo válido e inválido (estado visual)',
-        `<div class="row g-3">
+    `<div class="row g-3">
           <div class="col-md-6">
             <label class="form-label">Campo válido</label>
             <input type="text" class="form-control is-valid" value="Texto correto">
@@ -2674,29 +2865,29 @@ function paginaValidacao() {
             <div class="invalid-feedback">Selecione uma opção.</div>
           </div>
         </div>`,
-        `<input type="text" class="form-control is-valid" value="Ok">
+    `<input type="text" class="form-control is-valid" value="Ok">
 <div class="valid-feedback">Parece bom!</div>
 
 <input type="text" class="form-control is-invalid">
 <div class="invalid-feedback">Preencha este campo.</div>`,
-        `Use is-valid / is-invalid nos controles e valid-feedback / invalid-feedback para o texto`,
-        ''
-      )}
+    `Use is-valid / is-invalid nos controles e valid-feedback / invalid-feedback para o texto`,
+    ''
+  )}
 
       ${componenteComCodigo('Checkbox com feedback inválido',
-        `<div class="form-check">
+    `<div class="form-check">
           <input class="form-check-input is-invalid" type="checkbox" id="valCheck">
           <label class="form-check-label" for="valCheck">Aceito os termos e condições</label>
           <div class="invalid-feedback">Você precisa concordar para continuar.</div>
         </div>`,
-        `<div class="form-check">
+    `<div class="form-check">
   <input class="form-check-input is-invalid" type="checkbox" id="c1">
   <label class="form-check-label" for="c1">Aceito os termos</label>
   <div class="invalid-feedback">Você precisa concordar.</div>
 </div>`,
-        `Checkbox e radio também suportam valid-feedback e invalid-feedback`,
-        ''
-      )}
+    `Checkbox e radio também suportam valid-feedback e invalid-feedback`,
+    ''
+  )}
     </section>
   `;
 }
@@ -2708,7 +2899,7 @@ function paginaNavbar() {
       <p class="lead text-muted mb-4">Barra de navegação no topo da página. Responsiva: em telas pequenas o menu vira um botão (hamburger) que abre o restante dos links.</p>
 
       ${componenteComCodigo('Navbar Primary',
-        `<nav class="navbar navbar-expand-lg bg-primary navbar-dark rounded">
+    `<nav class="navbar navbar-expand-lg bg-primary navbar-dark rounded">
           <div class="container-fluid">
             <a class="navbar-brand" href="#">EasyJur</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav1">
@@ -2722,14 +2913,14 @@ function paginaNavbar() {
             </div>
           </div>
         </nav>`,
-        `<nav class="navbar bg-primary navbar-dark">
+    `<nav class="navbar bg-primary navbar-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">Logo</a>
   </div>
 </nav>`,
-        `<Navbar brand="Logo" variant="primary" />`,
-        ''
-      )}
+    `<Navbar brand="Logo" variant="primary" />`,
+    ''
+  )}
     </section>
   `;
 }
@@ -2741,22 +2932,22 @@ function paginaBreadcrumb() {
       <p class="lead text-muted mb-4">Caminho da página atual (ex.: Home > Produtos > Detalhe). Ajuda o usuário a saber onde está e voltar níveis. Use <code>aria-current="page"</code> no item atual.</p>
 
       ${componenteComCodigo('Breadcrumb',
-        `<nav aria-label="breadcrumb">
+    `<nav aria-label="breadcrumb">
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
             <li class="breadcrumb-item"><a href="#">Library</a></li>
             <li class="breadcrumb-item active" aria-current="page">Data</li>
           </ol>
         </nav>`,
-        `<nav aria-label="breadcrumb">
+    `<nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="#">Home</a></li>
     <li class="breadcrumb-item active">Data</li>
   </ol>
 </nav>`,
-        `<Breadcrumb items={['Home', 'Data']} />`,
-        ''
-      )}
+    `<Breadcrumb items={['Home', 'Data']} />`,
+    ''
+  )}
     </section>
   `;
 }
@@ -2768,33 +2959,33 @@ function paginaTabs() {
       <p class="lead text-muted mb-4">Abas para alternar conteúdo na mesma página. Use <code>nav-tabs</code> para o estilo com borda embaixo ou <code>nav-pills</code> para o estilo “pill” (com fundo quando ativo).</p>
 
       ${componenteComCodigo('Nav Tabs',
-        `<ul class="nav nav-tabs mb-3">
+    `<ul class="nav nav-tabs mb-3">
           <li class="nav-item"><a class="nav-link active" href="#">Active</a></li>
           <li class="nav-item"><a class="nav-link" href="#">Link</a></li>
           <li class="nav-item"><a class="nav-link disabled">Disabled</a></li>
         </ul>`,
-        `<ul class="nav nav-tabs">
+    `<ul class="nav nav-tabs">
   <li class="nav-item"><a class="nav-link active">Active</a></li>
 </ul>`,
-        `<Tabs>
+    `<Tabs>
   <Tab title="Active">...</Tab>
 </Tabs>`,
-        ''
-      )}
+    ''
+  )}
 
       ${componenteComCodigo('Nav Pills',
-        `<ul class="nav nav-pills">
+    `<ul class="nav nav-pills">
           <li class="nav-item"><a class="nav-link active" href="#">Active</a></li>
           <li class="nav-item"><a class="nav-link" href="#">Link</a></li>
           <li class="nav-item"><a class="nav-link" href="#">Outro</a></li>
         </ul>`,
-        `<ul class="nav nav-pills">
+    `<ul class="nav nav-pills">
   <li class="nav-item"><a class="nav-link active">Active</a></li>
   <li class="nav-item"><a class="nav-link">Link</a></li>
 </ul>`,
-        `nav-pills para estilo pill`,
-        ''
-      )}
+    `nav-pills para estilo pill`,
+    ''
+  )}
     </section>
   `;
 }
@@ -2806,7 +2997,7 @@ function paginaPagination() {
       <p class="lead text-muted mb-4">Navegação entre páginas de resultados. Use <code>page-item</code> e <code>page-link</code>; <code>active</code> e <code>disabled</code> para o estado atual e botões desativados.</p>
 
       ${componenteComCodigo('Pagination',
-        `<nav aria-label="Page navigation">
+    `<nav aria-label="Page navigation">
           <ul class="pagination">
             <li class="page-item disabled"><a class="page-link">Previous</a></li>
             <li class="page-item"><a class="page-link" href="#">1</a></li>
@@ -2815,12 +3006,12 @@ function paginaPagination() {
             <li class="page-item"><a class="page-link" href="#">Next</a></li>
           </ul>
         </nav>`,
-        `<ul class="pagination">
+    `<ul class="pagination">
   <li class="page-item"><a class="page-link">1</a></li>
 </ul>`,
-        `<Pagination total={10} current={2} />`,
-        ''
-      )}
+    `<Pagination total={10} current={2} />`,
+    ''
+  )}
     </section>
   `;
 }
@@ -2832,7 +3023,7 @@ function paginaDropdown() {
       <p class="lead text-muted mb-4">Menu que abre ao clicar no botão — ações secundárias, opções de ordenação ou “mais opções”. Requer JavaScript do Bootstrap para abrir/fechar.</p>
 
       ${componenteComCodigo('Dropdown Button',
-        `<div class="dropdown">
+    `<div class="dropdown">
           <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             Dropdown button
           </button>
@@ -2842,7 +3033,7 @@ function paginaDropdown() {
             <li><a class="dropdown-item" href="#">Something else here</a></li>
           </ul>
         </div>`,
-        `<div class="dropdown">
+    `<div class="dropdown">
   <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
     Dropdown
   </button>
@@ -2850,11 +3041,11 @@ function paginaDropdown() {
     <li><a class="dropdown-item">Action</a></li>
   </ul>
 </div>`,
-        `<Dropdown title="Dropdown">
+    `<Dropdown title="Dropdown">
   <Dropdown.Item>Action</Dropdown.Item>
 </Dropdown>`,
-        ''
-      )}
+    ''
+  )}
     </section>
   `;
 }
@@ -2867,7 +3058,7 @@ function paginaTabelas() {
       <p class="mb-4 text-muted small">Em mobile, envolva a tabela em <code>&lt;div class="table-responsive"&gt;</code> para permitir rolagem horizontal quando necessário.</p>
 
       ${componenteComCodigo('Tabela listrada e hover',
-        `<table class="table table-striped table-hover">
+    `<table class="table table-striped table-hover">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -2882,16 +3073,16 @@ function paginaTabelas() {
             <tr><th scope="row">3</th><td>Larry</td><td>the Bird</td><td>@twitter</td></tr>
           </tbody>
         </table>`,
-        `<table class="table table-striped table-hover">
+    `<table class="table table-striped table-hover">
   <thead>...</thead>
   <tbody>...</tbody>
 </table>`,
-        `table-striped alterna cor das linhas; table-hover destaca a linha ao passar o mouse`,
-        ''
-      )}
+    `table-striped alterna cor das linhas; table-hover destaca a linha ao passar o mouse`,
+    ''
+  )}
 
       ${componenteComCodigo('Tabela com bordas e compacta',
-        `<table class="table table-bordered table-sm">
+    `<table class="table table-bordered table-sm">
           <thead class="table-light">
             <tr><th scope="col">#</th><th scope="col">Campo</th><th scope="col">Valor</th></tr>
           </thead>
@@ -2900,16 +3091,16 @@ function paginaTabelas() {
             <tr><th scope="row">2</th><td>Status</td><td>Ativo</td></tr>
           </tbody>
         </table>`,
-        `<table class="table table-bordered table-sm">
+    `<table class="table table-bordered table-sm">
   <thead class="table-light">...</thead>
   <tbody>...</tbody>
 </table>`,
-        `table-bordered desenha bordas; table-sm reduz o padding das células`,
-        ''
-      )}
+    `table-bordered desenha bordas; table-sm reduz o padding das células`,
+    ''
+  )}
 
       ${componenteComCodigo('Tabela responsiva',
-        `<div class="table-responsive">
+    `<div class="table-responsive">
           <table class="table">
             <thead><tr><th>#</th><th>Coluna A</th><th>Coluna B</th><th>Coluna C</th><th>Coluna D</th></tr></thead>
             <tbody>
@@ -2917,12 +3108,12 @@ function paginaTabelas() {
             </tbody>
           </table>
         </div>`,
-        `<div class="table-responsive">
+    `<div class="table-responsive">
   <table class="table">...</table>
 </div>`,
-        `Em telas estreitas a tabela ganha scroll horizontal`,
-        ''
-      )}
+    `Em telas estreitas a tabela ganha scroll horizontal`,
+    ''
+  )}
     </section>
   `;
 }
@@ -2934,21 +3125,21 @@ function paginaListGroup() {
       <p class="lead text-muted mb-4">Listas com itens em bloco — ideal para menus laterais, resultados de busca ou qualquer lista em que cada item precise de destaque. Itens podem ser links, com badge ou ativo.</p>
 
       ${componenteComCodigo('Lista simples e ativo',
-        `<ul class="list-group" style="max-width: 400px;">
+    `<ul class="list-group" style="max-width: 400px;">
           <li class="list-group-item active" aria-current="true">Item ativo</li>
           <li class="list-group-item">Segundo item</li>
           <li class="list-group-item">Terceiro item</li>
         </ul>`,
-        `<ul class="list-group">
+    `<ul class="list-group">
   <li class="list-group-item active">Ativo</li>
   <li class="list-group-item">Item</li>
 </ul>`,
-        `list-group-item e list-group-item active`,
-        ''
-      )}
+    `list-group-item e list-group-item active`,
+    ''
+  )}
 
       ${componenteComCodigo('Lista com badges e links',
-        `<div class="list-group" style="max-width: 400px;">
+    `<div class="list-group" style="max-width: 400px;">
           <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
             Item clicável <span class="badge bg-primary rounded-pill">12</span>
           </a>
@@ -2956,14 +3147,14 @@ function paginaListGroup() {
             Outro item <span class="badge bg-secondary rounded-pill">3</span>
           </a>
         </div>`,
-        `<div class="list-group">
+    `<div class="list-group">
   <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between">
     Título <span class="badge bg-primary rounded-pill">1</span>
   </a>
 </div>`,
-        `list-group-item-action para links; badge para contadores`,
-        ''
-      )}
+    `list-group-item-action para links; badge para contadores`,
+    ''
+  )}
     </section>
   `;
 }
@@ -3003,7 +3194,7 @@ function paginaHelpers() {
       <h3 class="h5 fw-bold mt-4 mb-3">Display — mostrar e ocultar</h3>
       <p class="text-muted small mb-3">Controle se o elemento é bloco, flex, inline, ou está escondido. Útil para layouts responsivos: <code>.d-none .d-md-block</code> esconde no mobile e mostra a partir de md.</p>
       ${componenteComCodigo('Display e responsivo',
-        `<div class="d-flex flex-wrap gap-2">
+    `<div class="d-flex flex-wrap gap-2">
           <span class="d-inline-block p-2 bg-primary text-white rounded">d-inline-block</span>
           <span class="d-inline-block p-2 bg-secondary text-white rounded">d-inline-block</span>
         </div>
@@ -3011,17 +3202,17 @@ function paginaHelpers() {
           <span class="d-block p-2 bg-primary bg-opacity-25 rounded">d-block</span>
         </div>
         <p class="mt-2 small text-muted mb-0">Em telas md+: <code>.d-none .d-md-block</code> — elemento só aparece a partir do breakpoint médio.</p>`,
-        `<div class="d-flex">...</div>
+    `<div class="d-flex">...</div>
 <span class="d-block">...</span>
 <div class="d-none d-md-block">Só em md ou maior</div>`,
-        `d-inline, d-block, d-flex, d-none, d-md-block, etc.`,
-        ''
-      )}
+    `d-inline, d-block, d-flex, d-none, d-md-block, etc.`,
+    ''
+  )}
 
       <h3 class="h5 fw-bold mt-4 mb-3">Flex — direção e alinhamento</h3>
       <p class="text-muted small mb-3">Com <code>.d-flex</code> os filhos viram itens flex. Use <code>justify-content-*</code> (start, center, end, between, around) e <code>align-items-*</code> (start, center, end) para alinhar.</p>
       ${componenteComCodigo('Flex: direção e justify',
-        `<div class="d-flex flex-row gap-2 mb-2 p-2 bg-light rounded">
+    `<div class="d-flex flex-row gap-2 mb-2 p-2 bg-light rounded">
           <span class="p-2 bg-primary text-white rounded">1</span>
           <span class="p-2 bg-primary text-white rounded">2</span>
           <span class="p-2 bg-primary text-white rounded">3</span>
@@ -3033,84 +3224,170 @@ function paginaHelpers() {
         <div class="d-flex justify-content-center gap-2 p-2 bg-light rounded">
           <span class="p-2 bg-secondary text-white rounded">Centro</span>
         </div>`,
-        `<div class="d-flex flex-row">...</div>
+    `<div class="d-flex flex-row">...</div>
 <div class="d-flex justify-content-between">...</div>
 <div class="d-flex justify-content-center">...</div>
 <div class="d-flex flex-column">...</div>`,
-        `flex-row, flex-column, justify-content-*, align-items-*`,
-        ''
-      )}
+    `flex-row, flex-column, justify-content-*, align-items-*`,
+    ''
+  )}
 
       <h3 class="h5 fw-bold mt-4 mb-3">Bordas e arredondamento</h3>
       <p class="text-muted small mb-3">Bordas com <code>.border</code>, <code>.border-primary</code>, <code>.border-top</code>, etc. Cantos arredondados: <code>.rounded</code>, <code>.rounded-3</code>, <code>.rounded-pill</code>.</p>
       ${componenteComCodigo('Bordas e rounded',
-        `<div class="d-flex flex-wrap gap-2">
+    `<div class="d-flex flex-wrap gap-2">
           <div class="p-3 border rounded">.border .rounded</div>
           <div class="p-3 border border-primary rounded-3">.border-primary .rounded-3</div>
           <div class="p-3 border rounded-pill">.rounded-pill</div>
         </div>`,
-        `<div class="border rounded">...</div>
+    `<div class="border rounded">...</div>
 <div class="border border-primary rounded-3">...</div>`,
-        `border, border-0, border-top, rounded, rounded-circle, rounded-pill`,
-        ''
-      )}
+    `border, border-0, border-top, rounded, rounded-circle, rounded-pill`,
+    ''
+  )}
 
       <h3 class="h5 fw-bold mt-4 mb-3">Overflow e visibilidade</h3>
       <p class="text-muted small mb-3">Evite conteúdo vazando: <code>.overflow-auto</code> (scroll quando precisar), <code>.overflow-hidden</code>. Esconder visualmente mas manter para leitores de tela: <code>.visually-hidden</code>. Elemento invisível: <code>.invisible</code>.</p>
       ${componenteComCodigo('Overflow auto',
-        `<div class="overflow-auto border rounded p-2" style="max-height: 80px;">
+    `<div class="overflow-auto border rounded p-2" style="max-height: 80px;">
           Conteúdo longo que pode quebrar o layout. Com overflow-auto aparece uma barra de rolagem quando o conteúdo passa da altura máxima definida. Assim o bloco não estoura o container.
         </div>`,
-        `<div class="overflow-auto" style="max-height: 200px;">
+    `<div class="overflow-auto" style="max-height: 200px;">
   Conteúdo longo...
 </div>`,
-        `overflow-auto, overflow-hidden, overflow-scroll`,
-        ''
-      )}
+    `overflow-auto, overflow-hidden, overflow-scroll`,
+    ''
+  )}
 
       <h3 class="h5 fw-bold mt-4 mb-3">Texto truncado e ratio</h3>
       <p class="text-muted small mb-3">Uma linha com reticências: <code>.text-truncate</code> (precisa de largura ou max-width). Vídeo responsivo com proporção fixa: <code>.ratio .ratio-16x9</code> com um <code>&lt;iframe&gt;</code> ou <code>&lt;video&gt;</code> dentro.</p>
       ${componenteComCodigo('Text truncate e ratio',
-        `<div class="text-truncate border rounded p-2 mb-3" style="max-width: 100%;">Texto muito longo que será cortado com reticências no final quando não couber na linha.</div>
+    `<div class="text-truncate border rounded p-2 mb-3" style="max-width: 100%;">Texto muito longo que será cortado com reticências no final quando não couber na linha.</div>
         <div class="ratio ratio-16x9 border rounded overflow-hidden" style="max-width: 320px;">
           <div class="bg-secondary d-flex align-items-center justify-content-center text-white">16:9</div>
         </div>`,
-        `<p class="text-truncate" style="max-width: 200px;">Texto longo...</p>
+    `<p class="text-truncate" style="max-width: 200px;">Texto longo...</p>
 <div class="ratio ratio-16x9">
   <iframe src="..."></iframe>
 </div>`,
-        `text-truncate; ratio ratio-16x9, ratio-4x3, ratio-1x1`,
-        ''
-      )}
+    `text-truncate; ratio ratio-16x9, ratio-4x3, ratio-1x1`,
+    ''
+  )}
 
       <h3 class="h5 fw-bold mt-4 mb-3">Stretched link</h3>
       <p class="text-muted small mb-3">Adicione <code>.stretched-link</code> em um link dentro de um card (ou outro bloco). O clique passa a valer em toda a área do card, mantendo o link acessível.</p>
       ${componenteComCodigo('Card clicável (stretched-link)',
-        `<div class="card border position-relative" style="max-width: 18rem;">
+    `<div class="card border position-relative" style="max-width: 18rem;">
           <div class="card-body">
             <h6 class="card-title">Título do card</h6>
             <p class="card-text small text-muted mb-2">Todo o card é clicável graças ao stretched-link.</p>
             <a href="#" class="stretched-link small">Ver mais</a>
           </div>
         </div>`,
-        `<div class="card position-relative">
+    `<div class="card position-relative">
   <div class="card-body">
     <h5 class="card-title">Título</h5>
     <a href="#" class="stretched-link">Ver mais</a>
   </div>
 </div>`,
-        `O pai precisa ter position-relative`,
-        ''
-      )}
+    `O pai precisa ter position-relative`,
+    ''
+  )}
 
       <h3 class="h5 fw-bold mt-4 mb-3">Centralizar com margin</h3>
       <p class="text-muted small mb-3">Para centralizar um bloco de largura fixa na horizontal: <code>.mx-auto</code>. Funciona quando o elemento tem <code>display: block</code> e uma largura definida.</p>
       ${componenteComCodigo('mx-auto',
-        `<div class="mx-auto p-3 bg-primary bg-opacity-25 rounded text-center" style="width: 200px;">Bloco centralizado</div>`,
-        `<div class="mx-auto" style="width: 200px;">Conteúdo centralizado</div>`,
-        `Margin horizontal automática`,
-        ''
-      )}
+    `<div class="mx-auto p-3 bg-primary bg-opacity-25 rounded text-center" style="width: 200px;">Bloco centralizado</div>`,
+    `<div class="mx-auto" style="width: 200px;">Conteúdo centralizado</div>`,
+    `Margin horizontal automática`,
+    ''
+  )}
     </section>
   `;
 }
+
+// ===================== LOGICA MULTISELECT (Global) =====================
+
+window.dsMultiselectToggle = function (item, e) {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  // Alterna classe selected
+  item.classList.toggle('selected');
+
+  // Atualiza Badges (simulação visual)
+  // Na aplicação real, isso seria reativo
+  const dropdown = item.closest('.dropdown-multiselect');
+  window.dsUpdateMultiselectBadges(dropdown);
+};
+
+window.dsMultiselectClear = function (id) {
+  const dropdown = document.getElementById(id);
+  if (!dropdown) return;
+
+  // Remove classe selected de todos
+  dropdown.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('selected'));
+
+  // Atualiza badges
+  window.dsUpdateMultiselectBadges(dropdown);
+
+  // Esconde botão limpar
+  const clearBtn = dropdown.querySelector('.action-clear');
+  if (clearBtn) clearBtn.style.display = 'none';
+
+  if (window.event) {
+    window.event.stopPropagation();
+  }
+};
+
+window.dsUpdateMultiselectBadges = function (dropdown) {
+  const badgesContainer = dropdown.querySelector('.selected-badges');
+  if (!badgesContainer) return;
+
+  const selectedItems = Array.from(dropdown.querySelectorAll('.dropdown-item.selected'));
+  const names = selectedItems.map(i => i.dataset.value || i.innerText.trim());
+
+  // Lógica de visualização: mostra até 2, depois +N
+  let html = '';
+
+  if (names.length === 0) {
+    html = `<span class="text-muted small fw-normal">Selecione</span>`;
+  } else {
+    // Primeiros 2 nomes
+    names.slice(0, 2).forEach(name => {
+      html += `<span class="badge bg-primary rounded-pill">${name}</span>`;
+    });
+  }
+
+  badgesContainer.innerHTML = html;
+
+  // Atualiza contador separado (lado direito)
+  const counterSpan = dropdown.querySelector('#demo-counter');
+  if (counterSpan) {
+    if (names.length > 2) {
+      counterSpan.innerText = `+${names.length - 2}`;
+      counterSpan.style.display = 'inline-block';
+    } else {
+      counterSpan.style.display = 'none';
+    }
+  }
+
+  // Lógica de visibilidade do botão limpar e divisor
+  const clearBtn = dropdown.querySelector('.action-clear');
+  if (clearBtn) {
+    const hasItems = names.length > 0;
+    clearBtn.style.display = hasItems ? 'flex' : 'none';
+
+    // Encontra o divisor (li com hr) anterior ao li do botão
+    const clearLi = clearBtn.closest('li');
+    if (clearLi) {
+      const dividerLi = clearLi.previousElementSibling;
+      if (dividerLi && dividerLi.querySelector('.dropdown-divider')) {
+        dividerLi.style.display = hasItems ? 'block' : 'none';
+      }
+    }
+  }
+};
+
+// ===================== FIM =====================
